@@ -1,6 +1,7 @@
-package org.rag4j.agent;
+package org.rag4j.agent.memory;
 
 import org.jetbrains.annotations.NotNull;
+import org.rag4j.agent.Conversation;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
