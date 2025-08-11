@@ -9,6 +9,7 @@ import com.openai.models.chat.completions.ChatCompletionMessage;
 import org.rag4j.agent.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +23,15 @@ public class OpenAIReasoning implements Reasoning {
     private final OpenAIClient openAIClient;
     private final ChatModel chatModel;
 
-    public OpenAIReasoning() {
-        this.openAIClient = OpenAIOkHttpClient.fromEnv();
+    public OpenAIReasoning(
+            @Value("${openai.proxy.url}") String openAIProxyUrl,
+            @Value("${openai.proxy.token}") String openAIProxyToken
+
+    ) {
+        this.openAIClient = OpenAIOkHttpClient.builder()
+                .apiKey(openAIProxyToken)
+                .baseUrl(openAIProxyUrl + "/openai")
+                .build();
         this.chatModel = ChatModel.GPT_4_1_MINI;
     }
 
