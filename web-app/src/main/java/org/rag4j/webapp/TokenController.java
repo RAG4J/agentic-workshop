@@ -1,4 +1,4 @@
-package org.rag4j.agent;
+package org.rag4j.webapp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

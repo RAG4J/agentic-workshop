@@ -1,8 +1,10 @@
-package org.rag4j.agent;
+package org.rag4j.webapp;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.rag4j.agent.Agent;
+import org.rag4j.agent.Conversation;
 import org.springframework.ui.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,4 +1,4 @@
-package org.rag4j.agent;
+package org.rag4j.webapp;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

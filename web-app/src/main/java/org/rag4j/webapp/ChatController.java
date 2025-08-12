@@ -1,5 +1,7 @@
-package org.rag4j.agent;
+package org.rag4j.webapp;
 
+import org.rag4j.agent.Agent;
+import org.rag4j.agent.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

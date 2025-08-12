@@ -1,4 +1,4 @@
-package org.rag4j.agent;
+package org.rag4j.webapp;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
