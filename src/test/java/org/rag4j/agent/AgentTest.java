@@ -1,0 +1,92 @@
+package org.rag4j.agent;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.rag4j.agent.memory.Memory;
+import org.rag4j.agent.reasoning.Reasoning;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.rag4j.agent.Sender.ASSISTANT;
+import static org.rag4j.agent.Sender.USER;
+
+class AgentTest {
+
+    @BeforeEach
+    void setUp() {
+    }
+
+    @AfterEach
+    void tearDown() {
+    }
+
+    @Test
+    @DisplayName("invoke returns conversation with user and assistant messages on happy path")
+    void invokeReturnsConversationWithUserAndAssistantMessagesOnHappyPath() {
+        Reasoning reasoning = mock(Reasoning.class);
+        Memory memory = mock(Memory.class);
+
+        String userId = "user1";
+        Conversation conversation = new Conversation(new java.util.ArrayList<>());
+        when(memory.retrieveConversation(userId)).thenReturn(conversation);
+
+        Conversation.Message assistantMessage = new Conversation.Message("Answer: Hi!", ASSISTANT.displayName());
+        when(reasoning.reason(any(Conversation.Message.class), any(Conversation.class))).thenReturn(assistantMessage);
+
+        Agent agent = new Agent(reasoning, memory);
+        Conversation.Message userMessage = new Conversation.Message("Hello", USER.displayName());
+        Conversation result = agent.invoke(userId, userMessage);
+
+        assertEquals(2, result.messages().size());
+        assertEquals(userMessage, result.messages().get(0));
+        assertEquals(new Conversation.Message("Hi!", "Assistant"), result.messages().get(1));
+        verify(memory).storeConversation(eq(userId), any(Conversation.class));
+    }
+
+    @Test
+    @DisplayName("invoke returns fallback message if reasoning returns no answer or action")
+    void invokeReturnsFallbackMessageIfNoAnswerOrAction() {
+        Reasoning reasoning = mock(Reasoning.class);
+        Memory memory = mock(Memory.class);
+        Agent agent = new Agent(reasoning, memory);
+        String userId = "user2";
+        Conversation.Message userMessage = new Conversation.Message("What?", "user");
+        Conversation conversation = new Conversation(new java.util.ArrayList<>());
+        when(memory.retrieveConversation(userId)).thenReturn(conversation);
+        Conversation.Message assistantMessage = new Conversation.Message("No answer here", "Assistant");
+        when(reasoning.reason(userMessage, conversation)).thenReturn(assistantMessage);
+
+        Conversation result = agent.invoke(userId, userMessage);
+        assertEquals(2, result.messages().size());
+        assertEquals(userMessage, result.messages().get(0));
+        assertEquals(new Conversation.Message("The Agent could not create an answer to your question.", "Assistant"), result.messages().get(1));
+    }
+
+    @Test
+    @DisplayName("invoke handles action extraction and executes action")
+    void invokeHandlesActionExtractionAndExecutesAction() {
+        Reasoning reasoning = mock(Reasoning.class);
+        Memory memory = mock(Memory.class);
+
+        String userId = "user3";
+        Conversation conversation = new Conversation(new java.util.ArrayList<>());
+        when(memory.retrieveConversation(userId)).thenReturn(conversation);
+
+        // Simulate reasoning returning an action
+        Conversation.Message actionMessage = new Conversation.Message("Action: get_talk_by_name: {\"name\":\"AI Agent\"}", "Assistant");
+        Conversation.Message answerMessage = new Conversation.Message("Answer: The talk is: AI Agent, by Jettro Coenradie, in room 42, at 11:00", "Assistant");
+        doReturn(actionMessage)
+                .doReturn(answerMessage)
+                .when(reasoning).reason(any(), eq(conversation));
+
+        Agent agent = spy(new Agent(reasoning, memory));
+        Conversation.Message userMessage = new Conversation.Message("Get talk by name called AI Agent", "user");
+        Conversation result = agent.invoke(userId, userMessage);
+        assertEquals(2, result.messages().size());
+        assertEquals(userMessage, result.messages().get(0));
+        assertEquals(new Conversation.Message("The talk is: AI Agent, by Jettro Coenradie, in room 42, at 11:00", "Assistant"), result.messages().get(1));
+    }
+
+}

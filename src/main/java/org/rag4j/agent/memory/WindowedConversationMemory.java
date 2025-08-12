@@ -2,6 +2,8 @@ package org.rag4j.agent.memory;
 
 import org.jetbrains.annotations.NotNull;
 import org.rag4j.agent.Conversation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,13 +11,18 @@ import java.util.Map;
 
 @Service("windowedConversationMemory")
 public class WindowedConversationMemory implements Memory {
+    private static final Logger logger = LoggerFactory.getLogger(WindowedConversationMemory.class);
+    private static final int MAX_CONVERSATION_SIZE = 10;
     private final Map<String, Conversation> conversationStore = new HashMap<>();
 
     @Override
     public void storeConversation(String userId, @NotNull Conversation conversation) {
+        logger.info("Storing conversation for user: {}", userId);
+
         // If the conversation exceeds a certain size, trim it from the start
-        if (conversation.messages().size() > 10) { // Example size limit
-            conversation.messages().subList(0, conversation.messages().size() - 10).clear();
+        if (conversation.messages().size() > MAX_CONVERSATION_SIZE) {
+            logger.info("Trimming conversation for user: {} to the last {} messages", userId, MAX_CONVERSATION_SIZE);
+            conversation.messages().subList(0, conversation.messages().size() - MAX_CONVERSATION_SIZE).clear();
         }
         conversationStore.put(userId, conversation);
     }

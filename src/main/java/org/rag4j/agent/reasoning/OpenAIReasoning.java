@@ -16,6 +16,10 @@ import java.util.List;
 
 import static org.rag4j.agent.Sender.*;
 
+/**
+ * OpenAIReasoning is a service that interacts with the OpenAI API to perform reasoning tasks.
+ * It uses the OpenAIClient to send messages and receive responses from the OpenAI model.
+ */
 @Service
 public class OpenAIReasoning implements Reasoning {
     private static final Logger logger = LoggerFactory.getLogger(OpenAIReasoning.class);
