@@ -16,8 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.rag4j.agent.Conversation;
-import org.rag4j.agent.Sender;
+import org.rag4j.agent.core.Conversation;
+import org.rag4j.agent.core.Sender;
 
 import java.util.List;
 import java.util.Optional;

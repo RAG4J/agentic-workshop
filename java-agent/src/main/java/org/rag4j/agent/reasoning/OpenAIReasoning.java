@@ -6,7 +6,8 @@ import com.openai.models.ChatModel;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionMessage;
-import org.rag4j.agent.Conversation;
+import org.rag4j.agent.core.Conversation;
+import org.rag4j.agent.core.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.rag4j.agent.Sender.*;
+import static org.rag4j.agent.core.Sender.*;
 
 /**
  * OpenAIReasoning is a service that interacts with the OpenAI API to perform reasoning tasks.

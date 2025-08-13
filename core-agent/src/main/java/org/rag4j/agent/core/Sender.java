@@ -1,4 +1,4 @@
-package org.rag4j.agent;
+package org.rag4j.agent.core;
 
 public enum Sender {
     SYSTEM("System"),

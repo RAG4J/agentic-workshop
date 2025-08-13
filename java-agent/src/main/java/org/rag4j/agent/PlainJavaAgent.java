@@ -1,5 +1,8 @@
 package org.rag4j.agent;
 
+import org.rag4j.agent.core.Agent;
+import org.rag4j.agent.core.Conversation;
+import org.rag4j.agent.core.Sender;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.reasoning.Reasoning;
 import org.slf4j.Logger;
@@ -10,8 +13,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.rag4j.agent.Sender.ASSISTANT;
-import static org.rag4j.agent.Sender.OBSERVATION;
+import static org.rag4j.agent.core.Sender.ASSISTANT;
+import static org.rag4j.agent.core.Sender.OBSERVATION;
 
 /**
  *

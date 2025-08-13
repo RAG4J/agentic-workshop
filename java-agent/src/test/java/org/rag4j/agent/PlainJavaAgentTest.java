@@ -4,13 +4,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.reasoning.Reasoning;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.rag4j.agent.Sender.ASSISTANT;
-import static org.rag4j.agent.Sender.USER;
+import static org.rag4j.agent.core.Sender.ASSISTANT;
+import static org.rag4j.agent.core.Sender.USER;
 
 class PlainJavaAgentTest {
 

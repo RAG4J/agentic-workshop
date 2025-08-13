@@ -8,36 +8,15 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>java-agent</artifactId>
-	<name>java-agent</name>
-	<description>Java agent for reasoning and memory</description>
+	<artifactId>core-agent</artifactId>
+	<name>core-agent</name>
+	<description>Core agent interfaces and data models</description>
 
 	<dependencies>
-		<!-- Internal dependencies -->
-		<dependency>
-			<groupId>org.rag4j</groupId>
-			<artifactId>core-agent</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.openai</groupId>
-			<artifactId>openai-java</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-
+		<!-- No external dependencies needed for core interfaces and records -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

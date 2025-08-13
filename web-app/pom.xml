@@ -13,6 +13,16 @@
 	<description>Web application for thymeleaf agent</description>
 
 	<dependencies>
+		<!-- Internal dependencies -->
+		<dependency>
+			<groupId>org.rag4j</groupId>
+			<artifactId>core-agent</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.rag4j</groupId>
+			<artifactId>java-agent</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 
 		<!-- Spring Boot Web dependencies -->
 		<dependency>

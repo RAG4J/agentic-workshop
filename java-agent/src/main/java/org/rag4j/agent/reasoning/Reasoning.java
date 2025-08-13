@@ -1,6 +1,6 @@
 package org.rag4j.agent.reasoning;
 
-import org.rag4j.agent.Conversation;
+import org.rag4j.agent.core.Conversation;
 
 /**
  * Reasoning interface for processing user messages within a conversation.

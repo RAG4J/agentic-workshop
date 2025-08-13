@@ -2,8 +2,8 @@ package org.rag4j.agent.memory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.rag4j.agent.Conversation;
-import org.rag4j.agent.Conversation.Message;
+import org.rag4j.agent.core.Conversation;
+import org.rag4j.agent.core.Conversation.Message;
 
 import java.util.ArrayList;
 import java.util.List;

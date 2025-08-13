@@ -1,7 +1,7 @@
 package org.rag4j.agent.memory;
 
 import org.jetbrains.annotations.NotNull;
-import org.rag4j.agent.Conversation;
+import org.rag4j.agent.core.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

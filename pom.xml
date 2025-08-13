@@ -29,6 +29,7 @@
 	</scm>
 
 	<modules>
+		<module>core-agent</module>
 		<module>java-agent</module>
 		<module>web-app</module>
 	</modules>
@@ -41,6 +42,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<!-- Internal dependencies -->
+			<dependency>
+				<groupId>org.rag4j</groupId>
+				<artifactId>core-agent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.rag4j</groupId>
 				<artifactId>java-agent</artifactId>

@@ -1,6 +1,6 @@
 package org.rag4j.agent.memory;
 
-import org.rag4j.agent.Conversation;
+import org.rag4j.agent.core.Conversation;
 
 /**
  * Memory interface for storing and retrieving conversations.
