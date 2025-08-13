@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 import static org.rag4j.agent.Sender.ASSISTANT;
 import static org.rag4j.agent.Sender.USER;
 
-class AgentTest {
+class PlainJavaAgentTest {
 
     @BeforeEach
     void setUp() {
@@ -35,7 +35,7 @@ class AgentTest {
         Conversation.Message assistantMessage = new Conversation.Message("Answer: Hi!", ASSISTANT.displayName());
         when(reasoning.reason(any(Conversation.Message.class), any(Conversation.class))).thenReturn(assistantMessage);
 
-        Agent agent = new Agent(reasoning, memory);
+        PlainJavaAgent agent = new PlainJavaAgent(reasoning, memory);
         Conversation.Message userMessage = new Conversation.Message("Hello", USER.displayName());
         Conversation result = agent.invoke(userId, userMessage);
 
@@ -50,7 +50,7 @@ class AgentTest {
     void invokeReturnsFallbackMessageIfNoAnswerOrAction() {
         Reasoning reasoning = mock(Reasoning.class);
         Memory memory = mock(Memory.class);
-        Agent agent = new Agent(reasoning, memory);
+        PlainJavaAgent agent = new PlainJavaAgent(reasoning, memory);
         String userId = "user2";
         Conversation.Message userMessage = new Conversation.Message("What?", "user");
         Conversation conversation = new Conversation(new java.util.ArrayList<>());
@@ -81,7 +81,7 @@ class AgentTest {
                 .doReturn(answerMessage)
                 .when(reasoning).reason(any(), eq(conversation));
 
-        Agent agent = spy(new Agent(reasoning, memory));
+        PlainJavaAgent agent = spy(new PlainJavaAgent(reasoning, memory));
         Conversation.Message userMessage = new Conversation.Message("Get talk by name called AI Agent", "user");
         Conversation result = agent.invoke(userId, userMessage);
         assertEquals(2, result.messages().size());

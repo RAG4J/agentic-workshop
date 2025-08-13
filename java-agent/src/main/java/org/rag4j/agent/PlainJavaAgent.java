@@ -17,13 +17,13 @@ import static org.rag4j.agent.Sender.OBSERVATION;
  *
  */
 @Service
-public class Agent {
-    private static final Logger logger = LoggerFactory.getLogger(Agent.class);
+public class PlainJavaAgent implements Agent {
+    private static final Logger logger = LoggerFactory.getLogger(PlainJavaAgent.class);
     private final Reasoning reasoning;
     private final Memory memory;
     private final int maxReasoningSteps = 5;
 
-    public Agent(Reasoning reasoning, Memory memory) {
+    public PlainJavaAgent(Reasoning reasoning, Memory memory) {
         this.reasoning = reasoning;
         this.memory = memory;
     }

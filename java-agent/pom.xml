@@ -13,6 +13,14 @@
 	<description>Java agent for reasoning and memory</description>
 
 	<dependencies>
+<!--        Internal dependencies -->
+        <dependency>
+            <groupId>org.rag4j</groupId>
+            <artifactId>web-app</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
 		<dependency>
 			<groupId>com.openai</groupId>
 			<artifactId>openai-java</artifactId>
