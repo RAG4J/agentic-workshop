@@ -31,6 +31,7 @@
 	<modules>
 		<module>core-agent</module>
 		<module>java-agent</module>
+		<module>springai-agent</module>
 		<module>web-app</module>
 	</modules>
 
@@ -50,6 +51,11 @@
 			<dependency>
 				<groupId>org.rag4j</groupId>
 				<artifactId>java-agent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.rag4j</groupId>
+				<artifactId>springai-agent</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			

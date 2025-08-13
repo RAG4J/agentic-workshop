@@ -27,7 +27,7 @@ public class OpenAIReasoning implements Reasoning {
     public OpenAIReasoning(String openAIProxyUrl, String openAIProxyToken) {
         this.openAIClient = OpenAIOkHttpClient.builder()
                 .apiKey(openAIProxyToken)
-                .baseUrl(openAIProxyUrl + "/openai")
+                .baseUrl(openAIProxyUrl + "/openai/v1")
                 .build();
         this.chatModel = ChatModel.GPT_4_1_MINI;
     }
