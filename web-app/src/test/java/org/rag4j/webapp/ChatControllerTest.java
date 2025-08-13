@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.rag4j.agent.core.Sender.ASSISTANT;
+import static org.rag4j.agent.core.Sender.USER;
 
 class ChatControllerTest {
 
@@ -20,8 +22,8 @@ class ChatControllerTest {
         String userId = "user123";
         String message = "Hello!";
         Conversation conversation = new Conversation(java.util.List.of(
-                new Conversation.Message("Hello!", "User"),
-                new Conversation.Message("Hi!", "Assistant")
+                new Conversation.Message("Hello!", USER),
+                new Conversation.Message("Hi!", ASSISTANT)
         ));
         when(agent.invoke(eq(userId), any(Conversation.Message.class))).thenReturn(conversation);
 
@@ -57,8 +59,8 @@ class ChatControllerTest {
         Model model = mock(Model.class);
         String message = "Hi there!";
         Conversation conversation = new Conversation(java.util.List.of(
-                new Conversation.Message("Hi there!", "User"),
-                new Conversation.Message("Hello!", "Assistant")
+                new Conversation.Message("Hi there!", USER),
+                new Conversation.Message("Hello!", ASSISTANT)
         ));
         when(agent.invoke(anyString(), any(Conversation.Message.class))).thenReturn(conversation);
 
@@ -83,8 +85,8 @@ class ChatControllerTest {
         String userId = "userX";
         String message = "<script>alert('xss')</script>";
         Conversation conversation = new Conversation(java.util.List.of(
-                new Conversation.Message("&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;", "User"),
-                new Conversation.Message("Hi!", "Assistant")
+                new Conversation.Message("&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;", USER),
+                new Conversation.Message("Hi!", ASSISTANT)
         ));
         when(agent.invoke(eq(userId), any(Conversation.Message.class))).thenReturn(conversation);
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
+import static org.rag4j.agent.core.Sender.USER;
 import static org.springframework.web.util.HtmlUtils.htmlEscape;
 
 
@@ -47,7 +48,7 @@ public class ChatController {
         String sanitizedMessage = htmlEscape(message);
         logger.info("Received chat message: {} from {}", sanitizedMessage, userId);
 
-        Conversation conversation = agent.invoke(userId, new Conversation.Message(sanitizedMessage, "User"));
+        Conversation conversation = agent.invoke(userId, new Conversation.Message(sanitizedMessage, USER));
 
         model.addAttribute("confirmation", "Message received!");
         model.addAttribute("userId", userId);

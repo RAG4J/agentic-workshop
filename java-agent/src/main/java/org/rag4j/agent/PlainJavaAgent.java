@@ -46,7 +46,7 @@ public class PlainJavaAgent implements Agent {
         if (reasoningStep > maxReasoningSteps) {
             logger.warn("Max reasoning steps reached, returning conversation without answer.");
             return new Conversation.Message("Unable to provide an answer after multiple reasoning steps.",
-                    ASSISTANT.displayName());
+                    ASSISTANT);
         }
 
         // Call the reasoning service to get the response
@@ -59,7 +59,7 @@ public class PlainJavaAgent implements Agent {
         if (answer.isPresent()) {
             String answerText = answer.get();
             logger.info("Answer: {}", answerText);
-            return new Conversation.Message(answerText, ASSISTANT.displayName());
+            return new Conversation.Message(answerText, ASSISTANT);
         }
 
         Optional<AgentAction> action = extractAction(response.content());
@@ -68,12 +68,12 @@ public class PlainJavaAgent implements Agent {
             logger.info("Action: {} with arguments: {}", agentAction.actionName(), agentAction.arguments());
             String actionResponse = this.executeAction(agentAction);
             Conversation.Message observationMessage = new Conversation.Message(
-                    "Observation: " + actionResponse, OBSERVATION.displayName());
+                    "Observation: " + actionResponse, OBSERVATION);
             return this.callReasoning(observationMessage, conversation, reasoningStep + 1);
         }
 
         return new Conversation.Message(
-                "The Agent could not create an answer to your question.", ASSISTANT.displayName());
+                "The Agent could not create an answer to your question.", ASSISTANT);
     }
 
     private String executeAction(AgentAction action) {

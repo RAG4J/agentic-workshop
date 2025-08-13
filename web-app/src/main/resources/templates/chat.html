@@ -27,7 +27,7 @@
                 </div>
                 <div th:if="${response}" class="alert alert-info response mt-3">
                     <div th:each="msg : ${response.messages}">
-                        <strong th:text="${msg.sender} + ':'"></strong>
+                        <strong th:text="${msg.sender.displayName()} + ':'"></strong>
                         <span th:text="${msg.content}"></span>
                     </div>
                 </div>

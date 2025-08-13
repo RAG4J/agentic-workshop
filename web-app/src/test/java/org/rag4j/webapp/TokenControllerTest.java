@@ -1,11 +1,10 @@
 package org.rag4j.webapp;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Value;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

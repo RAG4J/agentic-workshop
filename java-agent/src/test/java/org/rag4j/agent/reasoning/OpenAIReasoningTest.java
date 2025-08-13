@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.rag4j.agent.core.Sender.USER;
 
 class OpenAIReasoningTest {
     private OpenAIReasoning openAIReasoning;
@@ -43,7 +44,7 @@ class OpenAIReasoningTest {
     @Test
     @DisplayName("Returns assistant message with LLM output on valid input")
     void returnsAssistantMessageWithLlmOutputOnValidInput() {
-        Conversation.Message userMessage = new Conversation.Message("Hello", Sender.USER.displayName());
+        Conversation.Message userMessage = new Conversation.Message("Hello", USER);
         Conversation conversation = new Conversation(List.of(userMessage));
 
         ChatCompletion mockCompletion = mock(ChatCompletion.class);
@@ -61,14 +62,14 @@ class OpenAIReasoningTest {
 
         Conversation.Message result = openAIReasoning.reason(userMessage, conversation);
         assertEquals("Hi there!", result.content());
-        assertEquals(Sender.ASSISTANT.displayName(), result.sender());
+        assertEquals(Sender.ASSISTANT, result.sender());
     }
 
 
     @Test
     @DisplayName("Throws exception if OpenAIClient throws")
     void throwsExceptionIfOpenAIClientThrows() {
-        Conversation.Message userMessage = new Conversation.Message("Hello", Sender.USER.displayName());
+        Conversation.Message userMessage = new Conversation.Message("Hello", USER);
         Conversation conversation = new Conversation(List.of(userMessage));
         when(mockClient.chat()).thenThrow(new RuntimeException("API error"));
 

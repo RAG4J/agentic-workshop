@@ -19,4 +19,13 @@ public enum Sender {
     public String toString() {
         return displayName;
     }
+
+    public static Sender from(String displayName) {
+        for (Sender sender : Sender.values()) {
+            if (sender.displayName.equalsIgnoreCase(displayName)) {
+                return sender;
+            }
+        }
+        throw new IllegalArgumentException("Unknown sender: " + displayName);
+    }
 }

@@ -16,6 +16,6 @@ public record Conversation(List<Message> messages) {
      * @param content the textual content of the message
      * @param sender  the sender of the message
      */
-    public record Message(String content, String sender) {
+    public record Message(String content, Sender sender) {
     }
 }

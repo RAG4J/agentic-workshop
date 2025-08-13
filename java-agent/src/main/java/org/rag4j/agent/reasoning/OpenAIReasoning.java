@@ -36,7 +36,7 @@ public class OpenAIReasoning implements Reasoning {
         String outputMessage = callLlm(userMessage, conversation);
         logger.debug("Received output message: {}", outputMessage);
 
-        return new Conversation.Message(outputMessage, ASSISTANT.displayName());
+        return new Conversation.Message(outputMessage, ASSISTANT);
     }
 
     private String callLlm(Conversation.Message userMessage, Conversation conversation) {
@@ -71,9 +71,9 @@ public class OpenAIReasoning implements Reasoning {
                                         Conversation conversation,
                                         ChatCompletionCreateParams.Builder createParamsBuilder) {
         for (Conversation.Message message : conversation.messages()) {
-            if (message.sender().equals(USER.displayName())) {
+            if (message.sender().equals(USER)) {
                 createParamsBuilder.addUserMessage(message.content());
-            } else if (message.sender().equals(ASSISTANT.displayName())) {
+            } else if (message.sender().equals(ASSISTANT)) {
                 createParamsBuilder.addAssistantMessage(message.content());
             }
         }

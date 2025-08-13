@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.rag4j.agent.core.Sender.USER;
 
 class WindowedConversationMemoryTest {
     private WindowedConversationMemory memory;
@@ -22,7 +23,7 @@ class WindowedConversationMemoryTest {
     void testStoreAndRetrieveConversation() {
         String userId = "user1";
         List<Message> messages = new ArrayList<>();
-        messages.add(new Message("Hello", "User"));
+        messages.add(new Message("Hello", USER));
         Conversation conversation = new Conversation(messages);
 
         memory.storeConversation(userId, conversation);
@@ -43,7 +44,7 @@ class WindowedConversationMemoryTest {
         String userId = "user2";
         List<Message> messages = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
-            messages.add(new Message("msg" + i, userId));
+            messages.add(new Message("msg" + i, USER));
         }
         Conversation conversation = new Conversation(messages);
         memory.storeConversation(userId, conversation);
