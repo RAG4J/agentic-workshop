@@ -7,11 +7,8 @@ import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionMessage;
 import org.rag4j.agent.core.Conversation;
-import org.rag4j.agent.core.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -21,18 +18,13 @@ import static org.rag4j.agent.core.Sender.*;
  * OpenAIReasoning is a service that interacts with the OpenAI API to perform reasoning tasks.
  * It uses the OpenAIClient to send messages and receive responses from the OpenAI model.
  */
-@Service
 public class OpenAIReasoning implements Reasoning {
     private static final Logger logger = LoggerFactory.getLogger(OpenAIReasoning.class);
 
     private final OpenAIClient openAIClient;
     private final ChatModel chatModel;
 
-    public OpenAIReasoning(
-            @Value("${openai.proxy.url}") String openAIProxyUrl,
-            @Value("${openai.proxy.token}") String openAIProxyToken
-
-    ) {
+    public OpenAIReasoning(String openAIProxyUrl, String openAIProxyToken) {
         this.openAIClient = OpenAIOkHttpClient.builder()
                 .apiKey(openAIProxyToken)
                 .baseUrl(openAIProxyUrl + "/openai")

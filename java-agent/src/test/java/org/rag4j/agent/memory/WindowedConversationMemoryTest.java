@@ -15,7 +15,7 @@ class WindowedConversationMemoryTest {
 
     @BeforeEach
     void setUp() {
-        memory = new WindowedConversationMemory();
+        memory = new WindowedConversationMemory(10);
     }
 
     @Test

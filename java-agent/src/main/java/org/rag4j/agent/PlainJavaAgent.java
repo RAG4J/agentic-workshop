@@ -2,12 +2,10 @@ package org.rag4j.agent;
 
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.core.Conversation;
-import org.rag4j.agent.core.Sender;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.reasoning.Reasoning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -19,16 +17,16 @@ import static org.rag4j.agent.core.Sender.OBSERVATION;
 /**
  *
  */
-@Service
 public class PlainJavaAgent implements Agent {
     private static final Logger logger = LoggerFactory.getLogger(PlainJavaAgent.class);
     private final Reasoning reasoning;
     private final Memory memory;
-    private final int maxReasoningSteps = 5;
+    private final int maxReasoningSteps;
 
-    public PlainJavaAgent(Reasoning reasoning, Memory memory) {
+    public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps) {
         this.reasoning = reasoning;
         this.memory = memory;
+        this.maxReasoningSteps = maxReasoningSteps;
     }
 
 
