@@ -1,12 +1,15 @@
 package org.rag4j.agent;
 
 import org.rag4j.agent.core.Agent;
+import org.rag4j.agent.core.ConferenceTalk;
+import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.reasoning.Reasoning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,11 +25,13 @@ public class PlainJavaAgent implements Agent {
     private final Reasoning reasoning;
     private final Memory memory;
     private final int maxReasoningSteps;
+    private final ConferenceTalksRepository conferenceTalksRepository;
 
-    public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps) {
+    public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps, ConferenceTalksRepository conferenceTalksRepository) {
         this.reasoning = reasoning;
         this.memory = memory;
         this.maxReasoningSteps = maxReasoningSteps;
+        this.conferenceTalksRepository = conferenceTalksRepository;
     }
 
 
@@ -80,11 +85,44 @@ public class PlainJavaAgent implements Agent {
         // Here you would implement the logic to execute the action
         // For now, we will just return a dummy response
         if (action.actionName().equals("get_talk_by_name")) {
-            return "The talk is: AI Agent, by Jettro Coenradie, in room 42, at 11:00";
-        } else if (action.actionName().equals("get_talk_by_time")) {
-            return "The talk is: AI GDPR, by Daniel Spee, in room 23, at 10:00";
+            String title = extractName(action.arguments());
+            logger.info("Finding talk by title: {}", title);
+            List<ConferenceTalk> talksByTitle = this.conferenceTalksRepository.findTalksByTitle(title);
+            if (talksByTitle.isEmpty()) {
+                return "No talks found with the title: " + title;
+            }
+            // Create a string containing all the talks found with a short message telling these are the found talks
+            StringBuilder response = new StringBuilder("Found talks with title '" + title + "':\n");
+            for (ConferenceTalk talk : talksByTitle) {
+                response.append(talk.toString());
+                response.append("\n");
+            }
+            return response.toString();
+        } else if (action.actionName().equals("get_talk_by_speaker")) {
+            String speaker = extractName(action.arguments());
+            logger.info("Finding talk by author: {}", speaker);
+            List<ConferenceTalk> talksBySpeaker = this.conferenceTalksRepository.findTalksBySpeaker(speaker);
+            if (talksBySpeaker.isEmpty()) {
+                return "No talks found with the title: " + speaker;
+            }
+            // Create a string containing all the talks found with a short message telling these are the found talks
+            StringBuilder response = new StringBuilder("Found talks with speaker '" + speaker + "':\n");
+            for (ConferenceTalk talk : talksBySpeaker) {
+                response.append(talk.toString());
+                response.append("\n");
+            }
+            return response.toString();
         }
         return "Unknown action executed.";
+    }
+
+    private static String extractName(String arguments) {
+        Pattern pattern = Pattern.compile("\\{\"name\":\\s*\"([^\"]+)\"\\}");
+        Matcher matcher = pattern.matcher(arguments);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
     private static void logThinking(String output_message) {

@@ -5,8 +5,8 @@ import java.util.List;
 public record ConferenceTalk(
         String title,
         String description,
-        String startTime,
-        String room,
+        String track,
+        String level,
         List<Speaker> speakers
 ) {
 }

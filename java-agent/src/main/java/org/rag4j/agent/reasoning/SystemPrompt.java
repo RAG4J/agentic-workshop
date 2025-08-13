@@ -10,8 +10,8 @@ public class SystemPrompt {
         String today = java.time.LocalDate.now().toString();
 
         String actionsStr = """
-            - get_talk_by_name: for obtaining a conference talk by name {"name": "string"}
-            - get_talk_by_time: for obtain a conference talk by start time (HH:mm) and room number {"start_time": "string","room_nr": "integer"}:
+            - get_talk_by_name: for obtaining conference talks by name {"name": "string"}
+            - get_talk_by_speaker: for obtaining conference talks by speaker name {"name": "string"}:
             """;
 
         return String.format("""

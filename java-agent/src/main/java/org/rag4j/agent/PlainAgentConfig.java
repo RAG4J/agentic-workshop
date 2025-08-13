@@ -1,6 +1,7 @@
 package org.rag4j.agent;
 
 import org.rag4j.agent.core.Agent;
+import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.memory.WindowedConversationMemory;
 import org.rag4j.agent.reasoning.OpenAIReasoning;
@@ -28,9 +29,13 @@ public class PlainAgentConfig {
         return new WindowedConversationMemory(maxConversationSize);
     }
 
+    @Bean
+    public ConferenceTalksRepository conferenceTalksRepository() {
+        return new ConferenceTalksRepository();
+    }
 
     @Bean
-    public Agent plainJavaAgent(Reasoning reasoning, Memory memory, @Value("${agent.plain.reasoning.max-steps: 5}") int maxReasoningSteps) {
-        return new PlainJavaAgent(reasoning, memory, maxReasoningSteps);
+    public Agent plainJavaAgent(Reasoning reasoning, Memory memory, @Value("${agent.plain.reasoning.max-steps: 5}") int maxReasoningSteps, ConferenceTalksRepository conferenceTalksRepository) {
+        return new PlainJavaAgent(reasoning, memory, maxReasoningSteps, conferenceTalksRepository);
     }
 }
