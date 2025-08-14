@@ -2,10 +2,10 @@ package org.rag4j.agent;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.reasoning.Reasoning;
+import org.rag4j.agent.tools.ToolRegistry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -17,7 +17,7 @@ class PlainJavaAgentTest {
     @Test
     @DisplayName("invoke returns conversation with user and assistant messages on happy path")
     void invokeReturnsConversationWithUserAndAssistantMessagesOnHappyPath() {
-        ConferenceTalksRepository conferenceTalksRepository = mock(ConferenceTalksRepository.class);
+        ToolRegistry toolRegistry = mock(ToolRegistry.class);
         Reasoning reasoning = mock(Reasoning.class);
         Memory memory = mock(Memory.class);
 
@@ -28,7 +28,7 @@ class PlainJavaAgentTest {
         Conversation.Message assistantMessage = new Conversation.Message("Answer: Hi!", ASSISTANT);
         when(reasoning.reason(any(Conversation.Message.class), any(Conversation.class))).thenReturn(assistantMessage);
 
-        PlainJavaAgent agent = new PlainJavaAgent(reasoning, memory, 5, conferenceTalksRepository);
+        PlainJavaAgent agent = new PlainJavaAgent(reasoning, memory, 5, toolRegistry);
         Conversation.Message userMessage = new Conversation.Message("Hello", USER);
         Conversation result = agent.invoke(userId, userMessage);
 
@@ -41,10 +41,10 @@ class PlainJavaAgentTest {
     @Test
     @DisplayName("invoke returns fallback message if reasoning returns no answer or action")
     void invokeReturnsFallbackMessageIfNoAnswerOrAction() {
-        ConferenceTalksRepository conferenceTalksRepository = mock(ConferenceTalksRepository.class);
+        ToolRegistry toolRegistry = mock(ToolRegistry.class);
         Reasoning reasoning = mock(Reasoning.class);
         Memory memory = mock(Memory.class);
-        PlainJavaAgent agent = new PlainJavaAgent(reasoning, memory, 5, conferenceTalksRepository);
+        PlainJavaAgent agent = new PlainJavaAgent(reasoning, memory, 5, toolRegistry);
         String userId = "user2";
         Conversation.Message userMessage = new Conversation.Message("What?", USER);
         Conversation conversation = new Conversation(new java.util.ArrayList<>());
@@ -55,13 +55,14 @@ class PlainJavaAgentTest {
         Conversation result = agent.invoke(userId, userMessage);
         assertEquals(2, result.messages().size());
         assertEquals(userMessage, result.messages().get(0));
-        assertEquals(new Conversation.Message("The Agent could not create an answer to your question.", ASSISTANT), result.messages().get(1));
+        assertEquals(new Conversation.Message("The Agent could not create an answer to your question.", ASSISTANT),
+                result.messages().get(1));
     }
 
     @Test
     @DisplayName("invoke handles action extraction and executes action")
     void invokeHandlesActionExtractionAndExecutesAction() {
-        ConferenceTalksRepository conferenceTalksRepository = mock(ConferenceTalksRepository.class);
+        ToolRegistry toolRegistry = mock(ToolRegistry.class);
         Reasoning reasoning = mock(Reasoning.class);
         Memory memory = mock(Memory.class);
 
@@ -70,18 +71,21 @@ class PlainJavaAgentTest {
         when(memory.retrieveConversation(userId)).thenReturn(conversation);
 
         // Simulate reasoning returning an action
-        Conversation.Message actionMessage = new Conversation.Message("Action: get_talk_by_name: {\"name\":\"AI Agent\"}", ASSISTANT);
-        Conversation.Message answerMessage = new Conversation.Message("Answer: The talk is: AI Agent, by Jettro Coenradie, in room 42, at 11:00", ASSISTANT);
+        Conversation.Message actionMessage = new Conversation.Message("Action: get_talk_by_name: {\"name\":\"AI " +
+                "Agent\"}", ASSISTANT);
+        Conversation.Message answerMessage = new Conversation.Message("Answer: The talk is: AI Agent, by Jettro " +
+                "Coenradie, in room 42, at 11:00", ASSISTANT);
         doReturn(actionMessage)
                 .doReturn(answerMessage)
                 .when(reasoning).reason(any(), eq(conversation));
 
-        PlainJavaAgent agent = spy(new PlainJavaAgent(reasoning, memory, 5,conferenceTalksRepository));
+        PlainJavaAgent agent = spy(new PlainJavaAgent(reasoning, memory, 5, toolRegistry));
         Conversation.Message userMessage = new Conversation.Message("Get talk by name called AI Agent", USER);
         Conversation result = agent.invoke(userId, userMessage);
         assertEquals(2, result.messages().size());
         assertEquals(userMessage, result.messages().get(0));
-        assertEquals(new Conversation.Message("The talk is: AI Agent, by Jettro Coenradie, in room 42, at 11:00", ASSISTANT), result.messages().get(1));
+        assertEquals(new Conversation.Message("The talk is: AI Agent, by Jettro Coenradie, in room 42, at 11:00",
+                ASSISTANT), result.messages().get(1));
     }
 
 }

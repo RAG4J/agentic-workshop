@@ -1,15 +1,14 @@
 package org.rag4j.agent;
 
 import org.rag4j.agent.core.Agent;
-import org.rag4j.agent.core.ConferenceTalk;
-import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.memory.Memory;
 import org.rag4j.agent.reasoning.Reasoning;
+import org.rag4j.agent.tools.AgentAction;
+import org.rag4j.agent.tools.ToolRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,13 +24,13 @@ public class PlainJavaAgent implements Agent {
     private final Reasoning reasoning;
     private final Memory memory;
     private final int maxReasoningSteps;
-    private final ConferenceTalksRepository conferenceTalksRepository;
+    private final ToolRegistry toolRegistry;
 
-    public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps, ConferenceTalksRepository conferenceTalksRepository) {
+    public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps, ToolRegistry toolRegistry) {
         this.reasoning = reasoning;
         this.memory = memory;
         this.maxReasoningSteps = maxReasoningSteps;
-        this.conferenceTalksRepository = conferenceTalksRepository;
+        this.toolRegistry = toolRegistry;
     }
 
 
@@ -82,47 +81,17 @@ public class PlainJavaAgent implements Agent {
     }
 
     private String executeAction(AgentAction action) {
-        // Here you would implement the logic to execute the action
-        // For now, we will just return a dummy response
-        if (action.actionName().equals("get_talk_by_name")) {
-            String title = extractName(action.arguments());
-            logger.info("Finding talk by title: {}", title);
-            List<ConferenceTalk> talksByTitle = this.conferenceTalksRepository.findTalksByTitle(title);
-            if (talksByTitle.isEmpty()) {
-                return "No talks found with the title: " + title;
-            }
-            // Create a string containing all the talks found with a short message telling these are the found talks
-            StringBuilder response = new StringBuilder("Found talks with title '" + title + "':\n");
-            for (ConferenceTalk talk : talksByTitle) {
-                response.append(talk.toString());
-                response.append("\n");
-            }
-            return response.toString();
-        } else if (action.actionName().equals("get_talk_by_speaker")) {
-            String speaker = extractName(action.arguments());
-            logger.info("Finding talk by author: {}", speaker);
-            List<ConferenceTalk> talksBySpeaker = this.conferenceTalksRepository.findTalksBySpeaker(speaker);
-            if (talksBySpeaker.isEmpty()) {
-                return "No talks found with the title: " + speaker;
-            }
-            // Create a string containing all the talks found with a short message telling these are the found talks
-            StringBuilder response = new StringBuilder("Found talks with speaker '" + speaker + "':\n");
-            for (ConferenceTalk talk : talksBySpeaker) {
-                response.append(talk.toString());
-                response.append("\n");
-            }
-            return response.toString();
+        try {
+            return toolRegistry.executeTool(action.actionName(), action.arguments());
+        } catch (IllegalArgumentException e) {
+            logger.error("Error executing action [{}] with arguments [{}]: {}",
+                    action.actionName(), action.arguments(), e.getMessage());
+            return "Error executing action: " + e.getMessage();
+        } catch (Exception e) {
+            logger.error("Unexpected error executing action [{}] with arguments [{}]: {}",
+                    action.actionName(), action.arguments(), e.getMessage());
+            return "Unexpected error executing action: " + e.getMessage();
         }
-        return "Unknown action executed.";
-    }
-
-    private static String extractName(String arguments) {
-        Pattern pattern = Pattern.compile("\\{\"name\":\\s*\"([^\"]+)\"\\}");
-        Matcher matcher = pattern.matcher(arguments);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
     }
 
     private static void logThinking(String output_message) {
@@ -155,6 +124,4 @@ public class PlainJavaAgent implements Agent {
         return Optional.empty();
     }
 
-    public record AgentAction(String actionName, String arguments) {
-    }
 }

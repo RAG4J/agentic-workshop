@@ -1,18 +1,28 @@
 package org.rag4j.agent.reasoning;
 
+import org.rag4j.agent.tools.ToolRegistry;
+
 public class SystemPrompt {
+    private final String agentName;
+    private final String agentIntro;
+    private final ToolRegistry toolRegistry;
 
-    public static String build() {
-        String agentIntro = """
-            You are an AI agent that answers questions about conference talks.
-            """;
+    public SystemPrompt(String agentName, String agentIntro, ToolRegistry registry) {
+        this.agentName = agentName;
+        this.agentIntro = agentIntro;
+        this.toolRegistry = registry;
+    }
 
+    public String agentName() {
+        return agentName;
+    }
+
+    public String build() {
         String today = java.time.LocalDate.now().toString();
 
-        String actionsStr = """
-            - get_talk_by_name: for obtaining conference talks by name {"name": "string"}
-            - get_talk_by_speaker: for obtaining conference talks by speaker name {"name": "string"}:
-            """;
+        String actionsStr = toolRegistry.toolDescriptions().stream()
+            .reduce((a, b) -> a + "\n" + b)
+            .orElse("No actions available");
 
         return String.format("""
 %s

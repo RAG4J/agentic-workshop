@@ -30,6 +30,8 @@ class OpenAIReasoningTest {
     @BeforeEach
     void setUp() {
         mockClient = mock(OpenAIClient.class);
+        SystemPrompt systemPrompt = mock(SystemPrompt.class);
+        when(systemPrompt.build()).thenReturn("You are a helpful assistant.");
         // Use Mockito to mock static builder and OpenAIOkHttpClient
         try (MockedStatic<OpenAIOkHttpClient> mockedStatic = Mockito.mockStatic(OpenAIOkHttpClient.class)) {
             OpenAIOkHttpClient.Builder builder = mock(OpenAIOkHttpClient.Builder.class);
@@ -37,7 +39,7 @@ class OpenAIReasoningTest {
             when(builder.baseUrl(anyString())).thenReturn(builder);
             when(builder.build()).thenReturn(mockClient);
             mockedStatic.when(OpenAIOkHttpClient::builder).thenReturn(builder);
-            openAIReasoning = new OpenAIReasoning("http://localhost", "token");
+            openAIReasoning = new OpenAIReasoning("http://localhost", "token", systemPrompt);
         }
     }
 

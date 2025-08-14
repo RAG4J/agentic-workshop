@@ -23,13 +23,15 @@ public class OpenAIReasoning implements Reasoning {
 
     private final OpenAIClient openAIClient;
     private final ChatModel chatModel;
+    private final SystemPrompt systemPrompt;
 
-    public OpenAIReasoning(String openAIProxyUrl, String openAIProxyToken) {
+    public OpenAIReasoning(String openAIProxyUrl, String openAIProxyToken, SystemPrompt systemPrompt) {
         this.openAIClient = OpenAIOkHttpClient.builder()
                 .apiKey(openAIProxyToken)
                 .baseUrl(openAIProxyUrl + "/openai/v1")
                 .build();
         this.chatModel = ChatModel.GPT_4_1_MINI;
+        this.systemPrompt = systemPrompt;
     }
 
     public Conversation.Message reason(Conversation.Message userMessage, Conversation conversation) {
@@ -42,7 +44,7 @@ public class OpenAIReasoning implements Reasoning {
     private String callLlm(Conversation.Message userMessage, Conversation conversation) {
         ChatCompletionCreateParams.Builder createParamsBuilder = ChatCompletionCreateParams.builder()
                 .model(this.chatModel)
-                .addDeveloperMessage(SystemPrompt.build());
+                .addDeveloperMessage(systemPrompt.build());
 
         prepareMessages(userMessage, conversation, createParamsBuilder);
 
