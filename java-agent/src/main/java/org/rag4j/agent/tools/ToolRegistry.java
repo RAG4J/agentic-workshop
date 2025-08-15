@@ -13,12 +13,12 @@ import java.util.Map;
  */
 public class ToolRegistry {
     private static final Logger logger = LoggerFactory.getLogger(ToolRegistry.class);
-    private final Map<String, AgenticTool> toolMap;
+    private final Map<String, Tool> toolMap;
 
 
-    public ToolRegistry(List<AgenticTool> tools) {
+    public ToolRegistry(List<Tool> tools) {
         this.toolMap = new HashMap<>();
-        for (AgenticTool tool : tools) {
+        for (Tool tool : tools) {
             this.toolMap.put(tool.toolName(), tool);
         }
 
@@ -34,7 +34,7 @@ public class ToolRegistry {
      */
     public List<String> toolDescriptions() {
         return toolMap.values().stream()
-                .map(AgenticTool::toolDefinition)
+                .map(Tool::toolDefinition)
                 .toList();
     }
 
@@ -57,7 +57,7 @@ public class ToolRegistry {
             throw new IllegalArgumentException("Arguments cannot be null.");
         }
 
-        AgenticTool tool = toolMap.get(toolName);
+        Tool tool = toolMap.get(toolName);
         if (tool == null) {
             logger.error("No such tool [{}].", toolName);
             throw new IllegalArgumentException("No such tool: " + toolName);

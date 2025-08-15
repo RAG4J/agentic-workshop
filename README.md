@@ -6,6 +6,6 @@
 - We hadden dat de agent in een loop kon komen, dit is nu opgelost door de agent te laten stoppen na 5 vragen. Dit is niet ideaal, maar het voorkomt wel dat de agent in een loop komt.
 - Een voorbeeld waarbij de agent niet genoeg informatie heeft om een tool te gebruiken, maar het wel duidelijk is dat hij de tool zou moeten gebruiken.
 - We hebben nu de output van de tool niet in de berichten zitten, hierdoor kunnen we de output van een bericht niet gebruiken bij een volgende vraag. Dit zou wel mooi zijn als we dit kunnen doen.
-- 
+- Een van de opdrachten kan zijn -> toevoegen van tool om te zoeken op level (could you give me 5 talks on beginner level?)
 
 

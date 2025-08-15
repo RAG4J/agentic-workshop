@@ -4,6 +4,7 @@ import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.core.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +24,7 @@ public class ChatController {
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
     private final Agent agent;
 
-    public ChatController(Agent agent) {
+    public ChatController(@Qualifier("orchestrator") Agent agent) {
         this.agent = agent;
     }
 

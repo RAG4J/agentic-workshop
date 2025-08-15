@@ -46,7 +46,7 @@ public class SpringAIAgentConfig {
                 .build();
     }
 
-    @Bean
+    @Bean(name = "orchestrator")
     public Agent springAIAgent(ChatClient chatClient) {
         return new SpringAIAgent(chatClient);
     }

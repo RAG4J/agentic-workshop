@@ -1,6 +1,5 @@
 package org.rag4j.agent.tools;
 
-import org.rag4j.agent.PlainJavaAgent;
 import org.rag4j.agent.core.ConferenceTalk;
 import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.slf4j.Logger;
@@ -8,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class FindTalksByTitle extends AgenticTool {
+public class FindTalksByTitle extends Tool {
     private static final Logger logger = LoggerFactory.getLogger(FindTalksByTitle.class);
     private final ConferenceTalksRepository conferenceTalksRepository;
 

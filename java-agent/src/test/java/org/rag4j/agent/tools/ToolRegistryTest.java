@@ -4,21 +4,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class ToolRegistryTest {
     private ToolRegistry registry;
-    private AgenticTool mockTool;
+    private Tool mockTool;
 
     @BeforeEach
     void setup() {
-        mockTool = Mockito.mock(AgenticTool.class);
+        mockTool = Mockito.mock(Tool.class);
         when(mockTool.toolName()).thenReturn("myTool");
         when(mockTool.toolDefinition()).thenReturn("myTool: for testing a tool {\"title\": \"string\"}");
         when(mockTool.execute(Mockito.anyString())).thenReturn("mock result");

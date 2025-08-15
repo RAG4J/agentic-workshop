@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AgenticToolTest {
+class ToolTest {
 
-    private static class DummyTool extends AgenticTool {
+    private static class DummyTool extends Tool {
         public DummyTool(String name, String description, String arguments) {
             super(name, description, arguments);
         }
@@ -19,7 +19,7 @@ class AgenticToolTest {
     @Test
     @DisplayName("extractSingleArgument returns value when argument is present")
     void extractSingleArgumentReturnsValueWhenArgumentIsPresent() {
-        AgenticTool tool = new DummyTool("dummy", "desc", "{\"name\": \"string\"}");
+        Tool tool = new DummyTool("dummy", "desc", "{\"name\": \"string\"}");
         String result = tool.extractSingleArgument("name", "{\"name\": \"value\"}");
         Assertions.assertEquals("value", result);
     }
@@ -27,7 +27,7 @@ class AgenticToolTest {
     @Test
     @DisplayName("extractSingleArgument returns null when argument is missing")
     void extractSingleArgumentReturnsNullWhenArgumentIsMissing() {
-        AgenticTool tool = new DummyTool("dummy", "desc", "{\"name\": \"string\"}");
+        Tool tool = new DummyTool("dummy", "desc", "{\"name\": \"string\"}");
         String result = tool.extractSingleArgument("name", "{\"other\": \"value\"}");
         Assertions.assertNull(result);
     }
@@ -35,7 +35,7 @@ class AgenticToolTest {
     @Test
     @DisplayName("extractSingleArgument returns null for malformed JSON")
     void extractSingleArgumentReturnsNullForMalformedJson() {
-        AgenticTool tool = new DummyTool("dummy", "desc", "{\"name\": \"string\"}");
+        Tool tool = new DummyTool("dummy", "desc", "{\"name\": \"string\"}");
         String result = tool.extractSingleArgument("name", "{name: value}");
         Assertions.assertNull(result);
     }
@@ -43,7 +43,7 @@ class AgenticToolTest {
     @Test
     @DisplayName("extractSingleArgument handles argument names with special regex characters")
     void extractSingleArgumentHandlesSpecialRegexCharactersInArgumentName() {
-        AgenticTool tool = new DummyTool("dummy", "desc", "{\"na.me\": \"string\"}");
+        Tool tool = new DummyTool("dummy", "desc", "{\"na.me\": \"string\"}");
         String result = tool.extractSingleArgument("na.me", "{\"na.me\": \"special\"}");
         Assertions.assertEquals("special", result);
     }
@@ -51,7 +51,7 @@ class AgenticToolTest {
     @Test
     @DisplayName("toolDefinition returns correct format")
     void toolDefinitionReturnsCorrectFormat() {
-        AgenticTool tool = new DummyTool("get_talk_by_name", "for obtaining conference talks by name", "{\"name\": \"string\"}");
+        Tool tool = new DummyTool("get_talk_by_name", "for obtaining conference talks by name", "{\"name\": \"string\"}");
         String result = tool.toolDefinition();
         Assertions.assertEquals("- get_talk_by_name: for obtaining conference talks by name {\"name\": \"string\"}", result);
     }
@@ -59,7 +59,7 @@ class AgenticToolTest {
     @Test
     @DisplayName("toolName returns the correct name")
     void toolNameReturnsCorrectName() {
-        AgenticTool tool = new DummyTool("my_tool", "desc", "{\"name\": \"string\"}");
+        Tool tool = new DummyTool("my_tool", "desc", "{\"name\": \"string\"}");
         Assertions.assertEquals("my_tool", tool.toolName());
     }
 }

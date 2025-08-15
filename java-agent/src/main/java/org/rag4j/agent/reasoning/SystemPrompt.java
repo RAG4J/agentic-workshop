@@ -1,11 +1,19 @@
 package org.rag4j.agent.reasoning;
 
+import java.util.List;
+
 import org.rag4j.agent.tools.ToolRegistry;
 
 public class SystemPrompt {
     private final String agentName;
     private final String agentIntro;
     private final ToolRegistry toolRegistry;
+
+    public SystemPrompt(String agentName, String agentIntro) {
+        this.agentName = agentName;
+        this.agentIntro = agentIntro;
+        this.toolRegistry = new ToolRegistry(List.of());
+    }
 
     public SystemPrompt(String agentName, String agentIntro, ToolRegistry registry) {
         this.agentName = agentName;

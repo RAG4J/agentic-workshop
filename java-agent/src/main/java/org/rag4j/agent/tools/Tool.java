@@ -3,12 +3,12 @@ package org.rag4j.agent.tools;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AgenticTool {
+public abstract class Tool {
     private final String name;
     private final String description;
     private final String arguments; // "{\"name\": \"string\"}"
 
-    public AgenticTool(String name, String description, String arguments) {
+    public Tool(String name, String description, String arguments) {
         this.name = name;
         this.description = description;
         this.arguments = arguments;

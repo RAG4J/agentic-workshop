@@ -11,7 +11,7 @@ import java.util.List;
  * Tool for finding conference talks by speaker.
  * This tool queries the ConferenceTalksRepository to find talks associated with a specific speaker.
  */
-public class FindTalksBySpeaker extends AgenticTool {
+public class FindTalksBySpeaker extends Tool {
     private static final Logger logger = LoggerFactory.getLogger(FindTalksBySpeaker.class);
     private final ConferenceTalksRepository conferenceTalksRepository;
 
