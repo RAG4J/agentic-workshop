@@ -34,3 +34,5 @@ build/
 
 ## jenv properties
 .java-version
+
+.run
