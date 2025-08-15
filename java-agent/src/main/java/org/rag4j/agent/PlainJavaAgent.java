@@ -39,7 +39,6 @@ public class PlainJavaAgent implements Agent {
 
         Conversation.Message answerMessage = this.callReasoning(message, conversation, 1);
 
-        conversation.messages().add(message);
         conversation.messages().add(answerMessage);
         memory.storeConversation(userId, conversation);
 
@@ -55,6 +54,9 @@ public class PlainJavaAgent implements Agent {
 
         // Call the reasoning service to get the response
         Conversation.Message response = reasoning.reason(userMessage, conversation);
+        if (userMessage.sender() != OBSERVATION) {
+            conversation.messages().add(userMessage);
+        }
         logger.debug("Received response: {}", response.content());
 
         // Log thinking and extract answer or action
