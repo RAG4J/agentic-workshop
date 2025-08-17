@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.rag4j</groupId>
+		<artifactId>thymeleaf-agent-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<artifactId>embabel-agent</artifactId>
+	<name>embabel-agent</name>
+	<description>Embabel agent implementation</description>
+
+    <properties>
+        <embabel-agent.version>0.1.1-SNAPSHOT</embabel-agent.version>
+        <kotlin.version>2.1.0</kotlin.version>
+    </properties>
+
+	<dependencies>
+		<!-- Internal dependency on core-agent -->
+		<dependency>
+			<groupId>org.rag4j</groupId>
+			<artifactId>core-agent</artifactId>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+        <!-- I need some kotlin magick to make this work -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring boot dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Embabel dependencies -->
+        <dependency>
+            <groupId>com.embabel.agent</groupId>
+            <artifactId>embabel-agent-starter</artifactId>
+            <version>${embabel-agent.version}</version>
+        </dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.embabel.agent</groupId>
+            <artifactId>embabel-agent-test</artifactId>
+            <version>${embabel-agent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+	</dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>embabel-snapshots</id>
+            <url>https://repo.embabel.com/artifactory/libs-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+
+        <plugins>
+            <!-- Kotlin MUST compile before Java in a mixed project -->
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile-kotlin</id>
+                        <phase>process-sources</phase>
+                        <goals><goal>compile</goal></goals>
+                        <configuration>
+                            <jdkHome>${JAVA_HOME}</jdkHome>
+                            <args>
+                                <arg>-Xjsr305=strict</arg>
+                            </args>
+                            <jvmTarget>21</jvmTarget>
+                            <languageVersion>1.9</languageVersion>
+                            <apiVersion>1.9</apiVersion>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                                <sourceDir>src/main/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile-kotlin</id>
+                        <phase>process-test-sources</phase>
+                        <goals><goal>test-compile</goal></goals>
+                        <configuration>
+                            <jvmTarget>21</jvmTarget>
+                            <sourceDirs>
+                                <sourceDir>src/test/kotlin</sourceDir>
+                                <sourceDir>src/test/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Java compiler still runs, but AFTER Kotlin produced stubs/classes -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

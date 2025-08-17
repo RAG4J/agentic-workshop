@@ -18,16 +18,18 @@ import static org.rag4j.agent.core.Sender.ASSISTANT;
 public class SpringAIAgent implements Agent {
     private static final Logger logger = LoggerFactory.getLogger(SpringAIAgent.class);
     private final ChatClient chatClient;
+    private final ConferenceTalksTools conferenceTalksTools;
 
-    public SpringAIAgent(ChatClient chatClient) {
+    public SpringAIAgent(ChatClient chatClient, ConferenceTalksTools conferenceTalksTools) {
         this.chatClient = chatClient;
+        this.conferenceTalksTools = conferenceTalksTools;
     }
 
     @Override
     public Conversation invoke(String userId, Conversation.Message userMessage) {
         logger.info("SpringAIAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
-                .tools(new ConferenceTalksTools())
+                .tools(conferenceTalksTools)
                 .system("You are an AI agent that answers questions about conference talks.")
                 .user(userMessage.content())
                 .advisors(a -> a.param(ChatMemory.DEFAULT_CONVERSATION_ID, userId))

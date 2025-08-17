@@ -1,85 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>org.rag4j</groupId>
-	<artifactId>thymeleaf-agent-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>thymeleaf-agent-parent</name>
-	<description>Parent POM for thymeleaf agent multimodule project</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.4</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.rag4j</groupId>
+    <artifactId>thymeleaf-agent-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>thymeleaf-agent-parent</name>
+    <description>Parent POM for thymeleaf agent multimodule project</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
 
-	<modules>
-		<module>core-agent</module>
-		<module>java-agent</module>
-		<module>springai-agent</module>
-		<module>web-app</module>
-	</modules>
+    <modules>
+        <module>core-agent</module>
+        <module>embabel-agent</module>
+        <module>java-agent</module>
+        <module>springai-agent</module>
+        <module>web-app</module>
+    </modules>
 
-	<properties>
-		<java.version>21</java.version>
-		<openai.version>2.20.1</openai.version>
-	</properties>
+    <properties>
+        <java.version>21</java.version>
+        <openai.version>2.20.1</openai.version>
+        <spring-boot.version>3.5.4</spring-boot.version>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<!-- Internal dependencies -->
-			<dependency>
-				<groupId>org.rag4j</groupId>
-				<artifactId>core-agent</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.rag4j</groupId>
-				<artifactId>java-agent</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.rag4j</groupId>
-				<artifactId>springai-agent</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			
-			<!-- External dependencies -->
-			<dependency>
-				<groupId>com.openai</groupId>
-				<artifactId>openai-java</artifactId>
-				<version>${openai.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal dependencies -->
+            <dependency>
+                <groupId>org.rag4j</groupId>
+                <artifactId>core-agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.rag4j</groupId>
+                <artifactId>embabel-agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.rag4j</groupId>
+                <artifactId>java-agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.rag4j</groupId>
+                <artifactId>springai-agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<configuration>
-						<argLine>-XX:+EnableDynamicAgentLoading</argLine>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+            <!-- External dependencies -->
+            <dependency>
+                <groupId>com.openai</groupId>
+                <artifactId>openai-java</artifactId>
+                <version>${openai.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

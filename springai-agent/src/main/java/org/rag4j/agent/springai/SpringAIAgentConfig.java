@@ -1,6 +1,7 @@
 package org.rag4j.agent.springai;
 
 import org.rag4j.agent.core.Agent;
+import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -17,6 +18,11 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("springai")
 public class SpringAIAgentConfig {
+
+    @Bean
+    public ConferenceTalksRepository getConferenceTalksRepository() {
+        return new ConferenceTalksRepository();
+    }
 
     @Bean
     public ChatModel chatModel(
@@ -47,7 +53,8 @@ public class SpringAIAgentConfig {
     }
 
     @Bean(name = "orchestrator")
-    public Agent springAIAgent(ChatClient chatClient) {
-        return new SpringAIAgent(chatClient);
+    public Agent springAIAgent(ChatClient chatClient, ConferenceTalksRepository conferenceTalksRepository) {
+        ConferenceTalksTools conferenceTalksTools = new ConferenceTalksTools(conferenceTalksRepository);
+        return new SpringAIAgent(chatClient, conferenceTalksTools);
     }
 }

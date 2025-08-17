@@ -1,5 +1,10 @@
-package org.rag4j.agent.springai;
+package org.rag4j.agent.embabel;
 
+import com.embabel.agent.api.annotation.ToolGroup;
+import com.embabel.agent.api.common.support.SelfToolGroup;
+import com.embabel.agent.core.ToolGroupDescription;
+import com.embabel.agent.core.ToolGroupPermission;
+import com.embabel.common.core.types.Semver;
 import org.rag4j.agent.core.ConferenceTalk;
 import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.slf4j.Logger;
@@ -7,12 +12,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 
 import java.util.List;
+import java.util.Set;
 
-public class ConferenceTalksTools {
-    private static final Logger logger = LoggerFactory.getLogger(ConferenceTalksTools.class);
+
+@ToolGroup(role = "jettro")
+public class EmbabelConferenceTools {
+    private static final Logger logger = LoggerFactory.getLogger(EmbabelConferenceTools.class);
     private final ConferenceTalksRepository conferenceTalksRepository;
 
-    public ConferenceTalksTools(ConferenceTalksRepository conferenceTalksRepository) {
+    public EmbabelConferenceTools(
+            ConferenceTalksRepository conferenceTalksRepository) {
         this.conferenceTalksRepository = conferenceTalksRepository;
     }
 
