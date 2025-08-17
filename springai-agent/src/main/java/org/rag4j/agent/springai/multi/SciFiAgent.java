@@ -1,52 +1,47 @@
-package org.rag4j.agent.springai;
+package org.rag4j.agent.springai.multi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.core.Conversation;
+import org.rag4j.agent.springai.ConferenceTalksTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.UserMessage;
 
 import static org.rag4j.agent.core.Sender.*;
 
-/**
- * Spring AI-based implementation of the Agent interface.
- * Uses Spring AI's ChatClient for LLM interactions.
- */
-public class SpringAIAgent implements Agent {
-    private static final Logger logger = LoggerFactory.getLogger(SpringAIAgent.class);
+public class SciFiAgent implements Agent {
+    private static final Logger logger = LoggerFactory.getLogger(SciFiAgent.class);
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
 
-    public SpringAIAgent(ChatClient chatClient, ChatMemory chatMemory) {
+    public SciFiAgent(ChatClient chatClient, ChatMemory chatMemory) {
         this.chatClient = chatClient;
         this.chatMemory = chatMemory;
     }
 
     @Override
     public Conversation invoke(String userId, Conversation.Message userMessage) {
-        logger.info("SpringAIAgent invoke userId = {}, userMessage = {}", userId, userMessage);
+        logger.info("SciFiAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
                 .tools(new ConferenceTalksTools())
-                .system("You are an AI agent that answers questions about conference talks.")
+                .system("""
+                        You are a geek that knows everything about Science Fiction related topics and likes to answer questions about this.
+                        Science Fiction is your only expertise, so you can not answer questions related to other topics.
+                        If the question is about a non-scifi topic, just say you don't know anything about that subject.
+                        """)
                 .user(userMessage.content())
                 .advisors(a -> a.param(ChatMemory.DEFAULT_CONVERSATION_ID, userId))
                 .call()
                 .content();
-        assert content != null;
         logger.info("SpringAIAgent invoke content = {}", content);
         return convertChatMemoryToConversation(chatMemory);
     }
-
     private Conversation convertChatMemoryToConversation(ChatMemory chatMemory) {
         List<Conversation.Message> messages = new ArrayList<>();
         for  (Message message : chatMemory.get(ChatMemory.DEFAULT_CONVERSATION_ID)) {
