@@ -1,4 +1,4 @@
-package org.rag4j.agent.springai.mutli;
+package org.rag4j.agent.springai.multi;
 
 import java.util.List;
 
