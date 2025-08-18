@@ -32,8 +32,8 @@ public class EmbabelAgentConfig {
         return new EmbabelConferenceTools(conferenceTalksRepository);
     }
 
-    @Bean
-    public SelfToolGroup conferenceTools(EmbabelConferenceTools embabelConferenceTools) {
-        return new EmbabelConferenceToolsAdapter(embabelConferenceTools);
-    }
+//    @Bean
+//    public SelfToolGroup conferenceTools(EmbabelConferenceTools embabelConferenceTools) {
+//        return new EmbabelConferenceToolsAdapter(embabelConferenceTools);
+//    }
 }

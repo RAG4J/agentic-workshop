@@ -18,15 +18,21 @@ import java.util.List;
         version = "1.0.0")
 public class TalksAgent {
     private static final Logger logger = LoggerFactory.getLogger(TalksAgent.class);
+    private final EmbabelConferenceTools tools;
+
+    public TalksAgent(EmbabelConferenceTools tools) {
+        this.tools = tools;
+    }
 
     @AchievesGoal(
             description = "Answers a question about conference talks using tools to obtain the right talks."
     )
-    @Action(toolGroups = {"talks"})
+    @Action
     public Conversation answerQuestion(Conversation.Message question, OperationContext context) {
         String response = context.promptRunner().withLlm(
                         LlmOptions.fromCriteria(AutoModelSelectionCriteria.INSTANCE)
                 )
+                .withToolObject(tools)
                 .generateText(String.format("""
                                  You will be given a question about conference talks.
                                  You have access to talks to search for conference talks.
