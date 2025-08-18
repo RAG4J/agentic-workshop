@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rag4j.agent.core.Agent;
+import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.springai.ConferenceTalksTools;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class SciFiAgent implements Agent {
     public Conversation invoke(String userId, Conversation.Message userMessage) {
         logger.info("SciFiAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
-                .tools(new ConferenceTalksTools())
+                .tools(new ConferenceTalksTools(new ConferenceTalksRepository()))
                 .system("""
                         You are a geek that knows everything about Science Fiction related topics and likes to answer questions about this.
                         Science Fiction is your only expertise, so you can not answer questions related to other topics.

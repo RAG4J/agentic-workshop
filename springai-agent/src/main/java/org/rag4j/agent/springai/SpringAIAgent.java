@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.rag4j.agent.core.Agent;
+import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.core.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class SpringAIAgent implements Agent {
     public Conversation invoke(String userId, Conversation.Message userMessage) {
         logger.info("SpringAIAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
-                .tools(new ConferenceTalksTools())
+                .tools(new ConferenceTalksTools(new ConferenceTalksRepository()))
                 .system("You are an AI agent that answers questions about conference talks.")
                 .user(userMessage.content())
                 .advisors(a -> a.param(ChatMemory.DEFAULT_CONVERSATION_ID, userId))
