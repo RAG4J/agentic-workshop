@@ -1,6 +1,5 @@
 package org.rag4j.agent.embabel;
 
-import com.embabel.agent.api.annotation.ToolGroup;
 import org.rag4j.agent.core.ConferenceTalk;
 import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.slf4j.Logger;
@@ -10,15 +9,8 @@ import org.springframework.ai.tool.annotation.Tool;
 import java.util.List;
 
 
-@ToolGroup(role = "jettro")
-public class EmbabelConferenceTools {
+public record EmbabelConferenceTools(ConferenceTalksRepository conferenceTalksRepository) {
     private static final Logger logger = LoggerFactory.getLogger(EmbabelConferenceTools.class);
-    private final ConferenceTalksRepository conferenceTalksRepository;
-
-    public EmbabelConferenceTools(
-            ConferenceTalksRepository conferenceTalksRepository) {
-        this.conferenceTalksRepository = conferenceTalksRepository;
-    }
 
     @Tool(description = "Find a conference talk by its title.")
     public List<ConferenceTalk> findConferenceTalkByTitle(String title) {

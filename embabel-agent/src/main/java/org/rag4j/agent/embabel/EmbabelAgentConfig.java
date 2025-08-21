@@ -1,7 +1,5 @@
 package org.rag4j.agent.embabel;
 
-import com.embabel.agent.api.annotation.ToolGroup;
-import com.embabel.agent.api.common.support.SelfToolGroup;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.config.annotation.LoggingThemes;
 import com.embabel.agent.config.annotation.McpServers;
@@ -23,7 +21,7 @@ public class EmbabelAgentConfig {
     }
 
     @Bean(name = "orchestrator")
-    public Agent embabelAgent(AgentPlatform platform) throws Exception {
+    public Agent embabelAgent(AgentPlatform platform) {
         return new EmbabelAgent(platform);
     }
 
@@ -31,9 +29,4 @@ public class EmbabelAgentConfig {
     public EmbabelConferenceTools embabelConferenceTools(ConferenceTalksRepository conferenceTalksRepository) {
         return new EmbabelConferenceTools(conferenceTalksRepository);
     }
-
-//    @Bean
-//    public SelfToolGroup conferenceTools(EmbabelConferenceTools embabelConferenceTools) {
-//        return new EmbabelConferenceToolsAdapter(embabelConferenceTools);
-//    }
 }

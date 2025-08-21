@@ -8,13 +8,8 @@ import org.springframework.ai.tool.annotation.Tool;
 
 import java.util.List;
 
-public class ConferenceTalksTools {
+public record ConferenceTalksTools(ConferenceTalksRepository conferenceTalksRepository) {
     private static final Logger logger = LoggerFactory.getLogger(ConferenceTalksTools.class);
-    private final ConferenceTalksRepository conferenceTalksRepository;
-
-    public ConferenceTalksTools(ConferenceTalksRepository conferenceTalksRepository) {
-        this.conferenceTalksRepository = conferenceTalksRepository;
-    }
 
     @Tool(description = "Find a conference talk by its title.")
     public List<ConferenceTalk> findConferenceTalkByTitle(String title) {

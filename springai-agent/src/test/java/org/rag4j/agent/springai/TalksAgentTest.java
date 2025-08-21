@@ -8,14 +8,15 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-class SpringAIAgentTest {
+class TalksAgentTest {
 
     @Test
     @DisplayName("SpringAIAgent can be created with required dependencies")
     void springAIAgentCanBeCreatedWithRequiredDependencies() {
         ChatClient chatClient = mock(ChatClient.class);
         ChatMemory chatMemory = mock(ChatMemory.class);
-        SpringAIAgent agent = new SpringAIAgent(chatClient, chatMemory);
+        ConferenceTalksTools conferenceTalksTools = mock(ConferenceTalksTools.class);
+        TalksAgent agent = new TalksAgent(chatClient, chatMemory, conferenceTalksTools);
         
         assertNotNull(agent);
     }

@@ -6,10 +6,6 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,26 +13,6 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("springai")
 public class SpringAIAgentConfig {
-
-    @Bean
-    public ChatModel chatModel(
-            @Value("${openai.proxy.url}") String openAIProxyUrl,
-            @Value("${openai.proxy.token}") String openAIProxyToken) {
-        OpenAiApi openAiApi = OpenAiApi.builder()
-                .baseUrl(openAIProxyUrl + "/openai")
-                .apiKey(openAIProxyToken)
-                .build();
-
-        OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
-                .model(OpenAiApi.ChatModel.GPT_4_1_MINI)
-                .build();
-
-        return OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(chatOptions)
-                .build();
-
-    }
 
     @Bean
     public ChatMemory chatMemory() {
@@ -51,7 +27,7 @@ public class SpringAIAgentConfig {
     }
 
     @Bean(name = "orchestrator")
-    public Agent springAIAgent(ChatClient chatClient,  ChatMemory chatMemory) {
-        return new SpringAIAgent(chatClient, chatMemory);
+    public Agent talksSpringAIAgent(ChatClient chatClient,  ChatMemory chatMemory, ConferenceTalksTools conferenceTalksTools) {
+        return new TalksAgent(chatClient, chatMemory, conferenceTalksTools);
     }
 }

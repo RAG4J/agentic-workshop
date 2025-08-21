@@ -10,15 +10,8 @@ import org.springframework.ai.chat.client.ChatClient;
 
 import static org.rag4j.agent.core.Sender.*;
 
-public class RouterAgent implements Agent {
+public record RouterAgent(ChatClient chatClient, AgentRegistry agentRegistry) implements Agent {
     private static final Logger logger = LoggerFactory.getLogger(RouterAgent.class);
-    private final ChatClient chatClient;
-    private final AgentRegistry agentRegistry;
-
-    public RouterAgent(ChatClient chatClient, AgentRegistry agentRegistry) {
-        this.chatClient = chatClient;
-        this.agentRegistry = agentRegistry;
-    }
 
     @Override
     public Conversation invoke(String userId, Conversation.Message userMessage) {
@@ -29,7 +22,7 @@ public class RouterAgent implements Agent {
                 The chosen agent should be able to answer the question from the input.
                 If you think neither of the agents will be able to answer the question, select UNKNOWN instead.
                 First explain your reasoning, then provide your selection in this JSON format:
-
+                
                 \\{
                     "reasoning": "Brief explanation of why this question should be routed to a specific agent.",
                     "selection": "The chosen agent"
@@ -52,5 +45,5 @@ public class RouterAgent implements Agent {
         }
     }
 
-    private record RoutingResponse(String reasoning, String selection) {}
+    record RoutingResponse(String reasoning, String selection) {}
 }

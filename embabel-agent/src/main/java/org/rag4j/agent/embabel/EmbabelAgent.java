@@ -12,20 +12,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * EmbabelAgent is an implementation of the Agent interface that provides
- * embellished responses to user messages.
- * <p>
- * This agent adds decorative elements and enhanced formatting to responses,
- * making conversations more engaging and visually appealing.
+ * EmbabelAgent is an implementation of the Agent interface that acts as the wrapper for the Embabel agent platform.
+ * We need this wrapper to be able to switch between the different agent platforms without changing the codebase.
  */
-public class EmbabelAgent implements Agent {
+public record EmbabelAgent(AgentPlatform agentPlatform) implements Agent {
     private static final Logger logger = LoggerFactory.getLogger(EmbabelAgent.class);
-
-    private final AgentPlatform agentPlatform;
-
-    public EmbabelAgent(AgentPlatform agentPlatform) {
-        this.agentPlatform = agentPlatform;
-    }
 
     /**
      * Invokes the agent with a user ID and a user message, returning a conversation
@@ -42,14 +33,11 @@ public class EmbabelAgent implements Agent {
 
         // Create a list to hold the conversation messages
         List<Conversation.Message> messages = new ArrayList<>();
-
-        // Add the user's message to the conversation
         messages.add(userMessage);
 
-        // Generate an embellished response
         com.embabel.agent.core.Agent embabelAgent =
                 agentPlatform.agents().stream().filter(agent -> agent.getName().toLowerCase().contains("talks")).findFirst()
-                .orElseThrow(() -> new IllegalStateException("No agent found for generating embellished responses"));
+                        .orElseThrow(() -> new IllegalStateException("No agent found for generating embellished responses"));
 
         AgentProcess process = agentPlatform.createAgentProcessFrom(
                 embabelAgent,
@@ -75,7 +63,6 @@ public class EmbabelAgent implements Agent {
             logger.error("Error processing agent response", e);
             embellishedResponse = new Conversation.Message("Sorry, I couldn't generate a response.", Sender.ASSISTANT);
         }
-
 
         messages.add(embellishedResponse);
 
