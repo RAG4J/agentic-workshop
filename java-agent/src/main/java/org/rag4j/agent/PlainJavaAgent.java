@@ -20,28 +20,15 @@ import static org.rag4j.agent.core.Sender.OBSERVATION;
 /**
  *
  */
-public class PlainJavaAgent implements Agent {
+public record PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps,
+                             ToolRegistry toolRegistry) implements Agent {
     private static final Logger logger = LoggerFactory.getLogger(PlainJavaAgent.class);
-    private final Reasoning reasoning;
-    private final Memory memory;
-    private final int maxReasoningSteps;
-    private final ToolRegistry toolRegistry;
 
     public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps) {
-        this.reasoning = reasoning;
-        this.memory = memory;
-        this.maxReasoningSteps = maxReasoningSteps;
-        this.toolRegistry = new ToolRegistry(List.of());
+        this(reasoning, memory, maxReasoningSteps, new ToolRegistry(List.of()));
     }
 
-    public PlainJavaAgent(Reasoning reasoning, Memory memory, int maxReasoningSteps, ToolRegistry toolRegistry) {
-        this.reasoning = reasoning;
-        this.memory = memory;
-        this.maxReasoningSteps = maxReasoningSteps;
-        this.toolRegistry = toolRegistry;
-    }
-
-
+    @Override
     public Conversation invoke(String userId, Conversation.Message message) {
         Conversation conversation = memory.retrieveConversation(userId);
 

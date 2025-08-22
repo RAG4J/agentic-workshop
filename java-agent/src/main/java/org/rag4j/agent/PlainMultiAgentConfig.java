@@ -23,30 +23,11 @@ import org.springframework.context.annotation.Profile;
 @Profile("plain-multi")
 public class PlainMultiAgentConfig {
 
-    @Bean
-    public Memory memory(@Value("${agent.plain.conversation.max-size:10}") int maxConversationSize) {
-        return new WindowedConversationMemory(maxConversationSize);
-    }
-
-    @Bean
-    public ConferenceTalksRepository conferenceTalksRepository() {
-        return new ConferenceTalksRepository();
-    }
-
     @Bean(name = "agentRegistry")
     public ToolRegistry agentRegistry(@Qualifier("talksAgent") Agent agent, @Qualifier("scifiAgent") Agent scifiAgent) {
         List<Tool> tools = List.of(
                 new AgentAsTool("talks_agent", "Agent to lookup talks based on the question from the user.", agent),
                 new AgentAsTool("scifi_agent", "Agent that talks about science fiction.", scifiAgent)
-        );
-        return new ToolRegistry(tools);
-    }
-
-    @Bean(name = "toolRegistry")
-    public ToolRegistry toolRegistry(ConferenceTalksRepository conferenceTalksRepository) {
-        List<Tool> tools = List.of(
-                new FindTalksByTitle(conferenceTalksRepository),
-                new FindTalksBySpeaker(conferenceTalksRepository)
         );
         return new ToolRegistry(tools);
     }

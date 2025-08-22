@@ -21,25 +21,6 @@ import org.springframework.context.annotation.Profile;
 @Profile("plain")
 public class PlainAgentConfig {
 
-    @Bean
-    public Memory memory(@Value("${agent.plain.conversation.max-size:10}") int maxConversationSize) {
-        return new WindowedConversationMemory(maxConversationSize);
-    }
-
-    @Bean
-    public ConferenceTalksRepository conferenceTalksRepository() {
-        return new ConferenceTalksRepository();
-    }
-
-    @Bean
-    public ToolRegistry toolRegistry(ConferenceTalksRepository conferenceTalksRepository) {
-        List<Tool> tools = List.of(
-                new FindTalksByTitle(conferenceTalksRepository),
-                new FindTalksBySpeaker(conferenceTalksRepository)
-        );
-        return new ToolRegistry(tools);
-    }
-
     @Bean(name = "orchestrator")
     public Agent orchestratorAgent(
             @Value("${openai.proxy.url}") String openAIProxyUrl,
