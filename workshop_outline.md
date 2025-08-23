@@ -29,3 +29,13 @@
 ## Evaluation
 
 # Implementing Agents with Spring AI
+
+# Embabel
+## Why?
+## Building blocks
+- Actions: The steps an agent takes
+- Goals: What the agent is trying to achieve
+- Conditions: Assessed before an action is taken and to check if a goal is achieved
+- Domain model: Objects underpinning the flow and informing Actions, Goals and Conditions.
+- Plan: THe sequence of actions to achieve a goal. The plan is created by Embabel based on the goals, actions and conditions defined. It is recreated after each action.
+

@@ -1,6 +1,10 @@
 package org.rag4j.agent.embabel;
 
+import com.embabel.agent.api.common.autonomy.AgentInvocation;
+import com.embabel.agent.api.common.autonomy.Autonomy;
+import com.embabel.agent.api.common.autonomy.AutonomyProperties;
 import com.embabel.agent.core.*;
+import com.embabel.agent.spi.support.LlmRanker;
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.core.Sender;
@@ -35,35 +39,19 @@ public record EmbabelAgent(AgentPlatform agentPlatform) implements Agent {
         List<Conversation.Message> messages = new ArrayList<>();
         messages.add(userMessage);
 
-        com.embabel.agent.core.Agent embabelAgent =
-                agentPlatform.agents().stream().filter(agent -> agent.getName().toLowerCase().contains("talks")).findFirst()
-                        .orElseThrow(() -> new IllegalStateException("No agent found for generating embellished responses"));
+        // Find the agent through the platform and invoke it
+        AgentInvocation<Conversation> invocation = AgentInvocation.builder(agentPlatform)
+                .options(options -> options
+                        .verbosity(verbosity -> verbosity
+                                .showPrompts(true)
+                                .showPlanning(true)
+                                .debug(true)))
+                .build(Conversation.class);
 
-        AgentProcess process = agentPlatform.createAgentProcessFrom(
-                embabelAgent,
-                ProcessOptions.builder()
-                        .budget(Budget.builder().tokens(Budget.DEFAULT_TOKEN_LIMIT).build())
-                        .verbosity(Verbosity.builder().showPrompts(true).showLlmResponses(true).showPlanning(true).build())
-                        .build(),
-                userMessage
-        );
+        Conversation conversation = invocation.invoke(userMessage);
 
-        CompletableFuture<AgentProcess> completableFuture = agentPlatform.start(process);
-        Conversation.Message embellishedResponse;
-        try {
-            AgentProcess completedProcess = completableFuture.get(); // Waits for completion
-            Object o = completedProcess.lastResult();// Replace with actual method
-            if (o instanceof Conversation(List<Conversation.Message> messages1)) {
-                embellishedResponse = messages1.getFirst();
-            } else {
-                logger.warn("Expected Conversation.Message but got: {}", o.getClass().getName());
-                embellishedResponse = new Conversation.Message("Sorry, I couldn't generate a response.", Sender.ASSISTANT);
-            }
-        } catch (Exception e) {
-            logger.error("Error processing agent response", e);
-            embellishedResponse = new Conversation.Message("Sorry, I couldn't generate a response.", Sender.ASSISTANT);
-        }
-
+        // Add the response to the conversation messages
+        Conversation.Message embellishedResponse = conversation.messages().getFirst();
         messages.add(embellishedResponse);
 
         logger.debug("Generated embellished response: {}", embellishedResponse);

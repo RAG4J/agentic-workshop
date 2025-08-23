@@ -10,5 +10,6 @@
 - Spring AI opdracht -> zelfde ChatClient gebruiken (met memory) voor zowel router als andere agents zorgt ervoor dat andere agents ook het reasoning/selection JSON object terug sturen.
 - Zouden we een agent kunnen maken die het stuk state management doet? Die alle berichten en tool resultaten krijgt om daar dingen uit te trekken die we in de state willen opslaan.
     - Ik zit hier ook te denken aan het vasthouden van een lijst met favorieten (zoals favorieten talks, of favorieten sprekers)
+- Embabel en zijn strongly typed objects, ook voor de llm hebben: Enjoy full refactoring support
 - 
 

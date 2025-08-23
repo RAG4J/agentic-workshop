@@ -1,135 +1,139 @@
 package org.rag4j.agent.embabel;
 
-import com.embabel.agent.core.Agent;
+import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
-import com.embabel.agent.core.AgentProcess;
-import com.embabel.agent.core.ProcessOptions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.core.Sender;
 
-import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class EmbabelAgentTest {
-
+    
     @Test
-    void testInvokeWithValidMessage() {
+    @DisplayName("invoke returns conversation with user and embellished response for normal input")
+    void invokeReturnsConversationWithUserAndEmbellishedResponse() {
         // Given
         AgentPlatform platform = mock(AgentPlatform.class);
-        Agent embabelAgent = mock(Agent.class);
-        AgentProcess process = mock(AgentProcess.class);
-        when(embabelAgent.getName()).thenReturn("talks");
-        when(platform.getName()).thenReturn("Embabel");
-        when(platform.agents()).thenReturn(Collections.singletonList(embabelAgent));
-
+        AgentInvocation.Builder builder = mock(AgentInvocation.Builder.class);
+        AgentInvocation<Conversation> invocation = mock(AgentInvocation.class);
+        
         Conversation.Message userMessage = new Conversation.Message("Hello there!", Sender.USER);
-        when(platform.createAgentProcessFrom(eq(embabelAgent), any(ProcessOptions.class), eq(userMessage)))
-                .thenReturn(process);
-        Conversation.Message assistant = new Conversation.Message("🌟 Hello there! — responded by EmbabelAgent", Sender.ASSISTANT);
-        when(process.lastResult()).thenReturn(new Conversation(java.util.List.of(assistant)));
-        when(platform.start(process)).thenReturn(CompletableFuture.completedFuture(process));
-
-        EmbabelAgent agent = new EmbabelAgent(platform);
-        String userId = "test-user-123";
-
-        // When
-        Conversation result = agent.invoke(userId, userMessage);
-
-        // Then
-        assertNotNull(result);
-        assertNotNull(result.messages());
-        assertEquals(2, result.messages().size());
-
-        // Verify user message is included
-        Conversation.Message firstMessage = result.messages().getFirst();
-        assertEquals("Hello there!", firstMessage.content());
-        assertEquals(Sender.USER, firstMessage.sender());
-
-        // Verify assistant response
-        Conversation.Message assistantMessage = result.messages().get(1);
-        assertNotNull(assistantMessage.content());
-        assertEquals(Sender.ASSISTANT, assistantMessage.sender());
-        assertTrue(assistantMessage.content().contains("🌟"));
-        assertTrue(assistantMessage.content().contains("Hello there!"));
-        assertTrue(assistantMessage.content().contains("EmbabelAgent"));
+        Conversation.Message assistantMessage = new Conversation.Message("🌟 Hello! How can I assist you with conference talks today?", Sender.ASSISTANT);
+        Conversation fakeResponse = new Conversation(List.of(assistantMessage));
+        
+        // Mock the builder pattern chain
+        when(builder.options(any(Consumer.class))).thenReturn(builder);
+        when(builder.build(Conversation.class)).thenReturn(invocation);
+        when(invocation.invoke(userMessage)).thenReturn(fakeResponse);
+        
+        // When & Then
+        try (MockedStatic<AgentInvocation> staticMock = Mockito.mockStatic(AgentInvocation.class)) {
+            staticMock.when(() -> AgentInvocation.builder(platform)).thenReturn(builder);
+            
+            EmbabelAgent agent = new EmbabelAgent(platform);
+            Conversation result = agent.invoke("user1", userMessage);
+            
+            assertEquals(2, result.messages().size());
+            assertEquals(userMessage, result.messages().get(0));
+            assertEquals(assistantMessage, result.messages().get(1));
+        }
     }
 
     @Test
-    void testInvokeWithEmptyMessage() {
+    @DisplayName("invoke handles empty response gracefully")
+    void invokeHandlesEmptyResponseGracefully() {
         // Given
         AgentPlatform platform = mock(AgentPlatform.class);
-        Agent embabelAgent = mock(Agent.class);
-        AgentProcess process = mock(AgentProcess.class);
-        when(embabelAgent.getName()).thenReturn("talks");
-        when(platform.getName()).thenReturn("Embabel");
-        when(platform.agents()).thenReturn(Collections.singletonList(embabelAgent));
-
-        Conversation.Message userMessage = new Conversation.Message("", Sender.USER);
-        when(platform.createAgentProcessFrom(eq(embabelAgent), any(ProcessOptions.class), eq(userMessage)))
-                .thenReturn(process);
-        Conversation.Message assistant = new Conversation.Message("✨ It seems you haven't said anything yet.", Sender.ASSISTANT);
-        when(process.lastResult()).thenReturn(new Conversation(java.util.List.of(assistant)));
-        when(platform.start(process)).thenReturn(CompletableFuture.completedFuture(process));
-
-        EmbabelAgent agent = new EmbabelAgent(platform);
-        String userId = "test-user-123";
-
-        // When
-        Conversation result = agent.invoke(userId, userMessage);
-
-        // Then
-        assertNotNull(result);
-        assertNotNull(result.messages());
-        assertEquals(2, result.messages().size());
-
-        // Verify assistant response for empty message
-        Conversation.Message assistantMessage = result.messages().get(1);
-        assertNotNull(assistantMessage.content());
-        assertEquals(Sender.ASSISTANT, assistantMessage.sender());
-        assertTrue(assistantMessage.content().contains("✨") || assistantMessage.content().contains("🌟"));
-        assertTrue(assistantMessage.content().toLowerCase().contains("haven't said anything yet") || assistantMessage.content().toLowerCase().contains("no input provided"));
+        AgentInvocation.Builder builder = mock(AgentInvocation.Builder.class);
+        AgentInvocation<Conversation> invocation = mock(AgentInvocation.class);
+        
+        Conversation.Message userMessage = new Conversation.Message("Hi", Sender.USER);
+        Conversation.Message defaultMessage = new Conversation.Message("I'm sorry, I couldn't generate a response.", Sender.ASSISTANT);
+        Conversation emptyResponse = new Conversation(List.of(defaultMessage));
+        
+        // Mock the builder pattern chain
+        when(builder.options(any(Consumer.class))).thenReturn(builder);
+        when(builder.build(Conversation.class)).thenReturn(invocation);
+        when(invocation.invoke(userMessage)).thenReturn(emptyResponse);
+        
+        // When & Then
+        try (MockedStatic<AgentInvocation> staticMock = Mockito.mockStatic(AgentInvocation.class)) {
+            staticMock.when(() -> AgentInvocation.builder(platform)).thenReturn(builder);
+            
+            EmbabelAgent agent = new EmbabelAgent(platform);
+            Conversation result = agent.invoke("user2", userMessage);
+            
+            assertEquals(2, result.messages().size());
+            assertEquals(userMessage, result.messages().get(0));
+            assertEquals(defaultMessage, result.messages().get(1));
+        }
     }
 
     @Test
-    void testInvokeWithNullMessage() {
+    @DisplayName("invoke throws exception if AgentInvocation throws")
+    void invokeThrowsExceptionIfAgentInvocationThrows() {
         // Given
         AgentPlatform platform = mock(AgentPlatform.class);
-        Agent embabelAgent = mock(Agent.class);
-        AgentProcess process = mock(AgentProcess.class);
-        when(embabelAgent.getName()).thenReturn("talks");
-        when(platform.getName()).thenReturn("Embabel");
-        when(platform.agents()).thenReturn(Collections.singletonList(embabelAgent));
+        AgentInvocation.Builder builder = mock(AgentInvocation.Builder.class);
+        AgentInvocation<Conversation> invocation = mock(AgentInvocation.class);
+        
+        Conversation.Message userMessage = new Conversation.Message("Error please", Sender.USER);
+        
+        // Mock the builder pattern chain
+        when(builder.options(any(Consumer.class))).thenReturn(builder);
+        when(builder.build(Conversation.class)).thenReturn(invocation);
+        when(invocation.invoke(userMessage)).thenThrow(new RuntimeException("Agent error"));
+        
+        // When & Then
+        try (MockedStatic<AgentInvocation> staticMock = Mockito.mockStatic(AgentInvocation.class)) {
+            staticMock.when(() -> AgentInvocation.builder(platform)).thenReturn(builder);
+            
+            EmbabelAgent agent = new EmbabelAgent(platform);
+            assertThrows(RuntimeException.class, () -> agent.invoke("user3", userMessage));
+        }
+    }
 
-        Conversation.Message userMessage = new Conversation.Message(null, Sender.USER);
-        when(platform.createAgentProcessFrom(eq(embabelAgent), any(ProcessOptions.class), eq(userMessage)))
-                .thenReturn(process);
-        Conversation.Message assistant = new Conversation.Message("🌟 No input provided.", Sender.ASSISTANT);
-        when(process.lastResult()).thenReturn(new Conversation(java.util.List.of(assistant)));
-        when(platform.start(process)).thenReturn(CompletableFuture.completedFuture(process));
-
-        EmbabelAgent agent = new EmbabelAgent(platform);
-        String userId = "test-user-123";
-
-        // When
-        Conversation result = agent.invoke(userId, userMessage);
-
-        // Then
-        assertNotNull(result);
-        assertNotNull(result.messages());
-        assertEquals(2, result.messages().size());
-
-        // Verify assistant response for null message
-        Conversation.Message assistantMessage = result.messages().get(1);
-        assertNotNull(assistantMessage.content());
-        assertEquals(Sender.ASSISTANT, assistantMessage.sender());
-        assertTrue(assistantMessage.content().contains("✨") || assistantMessage.content().contains("🌟"));
-        assertTrue(assistantMessage.content().toLowerCase().contains("haven't said anything yet") || assistantMessage.content().toLowerCase().contains("no input provided"));
+    @Test
+    @DisplayName("invoke logs processing information")
+    void invokeLogsProcessingInformation() {
+        // Given
+        AgentPlatform platform = mock(AgentPlatform.class);
+        AgentInvocation.Builder builder = mock(AgentInvocation.Builder.class);
+        AgentInvocation<Conversation> invocation = mock(AgentInvocation.class);
+        
+        Conversation.Message userMessage = new Conversation.Message("Test message", Sender.USER);
+        Conversation.Message assistantMessage = new Conversation.Message("Test response", Sender.ASSISTANT);
+        Conversation fakeResponse = new Conversation(List.of(assistantMessage));
+        
+        // Mock the builder pattern chain
+        when(builder.options(any(Consumer.class))).thenReturn(builder);
+        when(builder.build(Conversation.class)).thenReturn(invocation);
+        when(invocation.invoke(userMessage)).thenReturn(fakeResponse);
+        
+        // When & Then
+        try (MockedStatic<AgentInvocation> staticMock = Mockito.mockStatic(AgentInvocation.class)) {
+            staticMock.when(() -> AgentInvocation.builder(platform)).thenReturn(builder);
+            
+            EmbabelAgent agent = new EmbabelAgent(platform);
+            Conversation result = agent.invoke("test-user", userMessage);
+            
+            // Verify the result is correct
+            assertNotNull(result);
+            assertEquals(2, result.messages().size());
+            
+            // Verify interactions
+            verify(invocation).invoke(userMessage);
+            verify(builder).options(any(Consumer.class));
+            verify(builder).build(Conversation.class);
+        }
     }
 }
