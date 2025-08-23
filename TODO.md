@@ -11,5 +11,7 @@
 - Zouden we een agent kunnen maken die het stuk state management doet? Die alle berichten en tool resultaten krijgt om daar dingen uit te trekken die we in de state willen opslaan.
     - Ik zit hier ook te denken aan het vasthouden van een lijst met favorieten (zoals favorieten talks, of favorieten sprekers)
 - Embabel en zijn strongly typed objects, ook voor de llm hebben: Enjoy full refactoring support
+- We moeten nog iets met Human In The Loop doen.
+  - Misschien moeten we hem vertellen om vragen te stellen aan een gebruiker als iets niet duidelijk is.
 - 
 
