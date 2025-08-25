@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Profile;
 @Profile({"springai", "springai-multi"})
 public class SpringAIConfigCommon {
     @Bean
+    @Profile("!bedrock-proxy")
     public ChatModel chatModel(
             @Value("${openai.proxy.url}") String openAIProxyUrl,
             @Value("${openai.proxy.token}") String openAIProxyToken) {
