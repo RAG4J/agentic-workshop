@@ -1,0 +1,49 @@
+spring:
+  profiles:
+    active: springai
+    default: plain
+  application:
+    name: conference-agent
+  ai:
+    openai:
+      project-id: workshop
+      api-key: ${openai.proxy.token}
+      model: gpt-4.1-mini
+      chat-model: gpt-4.1-mini
+      embedding-model: text-embedding-3-small
+    ollama:
+      base-url: http://localhost:11434
+    mcp:
+      client:
+        enabled: true
+        type: SYNC
+        stdio:
+          connections:
+            time:
+              command: docker
+              args:
+                - run
+                - -i
+                - --rm
+                - mcp/time
+                - --local-timezone=America/New_York
+
+openai:
+  proxy:
+    url: https://vfjv12h3xb.execute-api.eu-west-1.amazonaws.com
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqZXR0cm8iLCJncnAiOiJ3b3Jrc2hvcCIsImlhdCI6MTc1NjE5Njk2NiwiZXhwIjoxNzU2MjA3NzY2fQ.pH93kj1uUlvGEw_djwVMoG_8Emlv_jQvq-AzYmHbnLE
+embabel:
+  agent:
+    platform:
+      models:
+        openai:
+          base-url: ${openai.proxy.url}/v1
+  models:
+    default-llm: gpt-4.1-mini
+  agent-platform:
+    ranking:
+      llm: gpt-4.1-mini
+logging:
+  level:
+    root: INFO
+
