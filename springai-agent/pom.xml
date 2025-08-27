@@ -12,10 +12,6 @@
 	<name>springai-agent</name>
 	<description>Spring AI agent implementation</description>
 
-	<properties>
-		<spring-ai.version>1.0.1</spring-ai.version>
-	</properties>
-
 	<dependencies>
 		<!-- Internal dependencies -->
 		<dependency>
@@ -58,15 +54,4 @@
 		</dependency>
 	</dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-bom</artifactId>
-                <version>${spring-ai.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

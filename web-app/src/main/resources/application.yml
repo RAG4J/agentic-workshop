@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: springai
+    active: embabel
     default: plain
   application:
     name: conference-agent
@@ -31,7 +31,7 @@ spring:
 openai:
   proxy:
     url: https://vfjv12h3xb.execute-api.eu-west-1.amazonaws.com
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqZXR0cm8iLCJncnAiOiJ3b3Jrc2hvcCIsImlhdCI6MTc1NjE5Njk2NiwiZXhwIjoxNzU2MjA3NzY2fQ.pH93kj1uUlvGEw_djwVMoG_8Emlv_jQvq-AzYmHbnLE
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTYzMDI0NjMsImV4cCI6MTc1NjMxMzI2M30.sm_9ONeHr1kYeHRC6uZDZpwQOeVKunN1umbgst7umPQ
 embabel:
   agent:
     platform:
@@ -46,4 +46,3 @@ embabel:
 logging:
   level:
     root: INFO
-

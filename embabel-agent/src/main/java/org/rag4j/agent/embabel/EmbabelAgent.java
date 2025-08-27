@@ -1,5 +1,6 @@
 package org.rag4j.agent.embabel;
 
+import com.embabel.agent.api.common.Ai;
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.api.common.autonomy.Autonomy;
 import com.embabel.agent.api.common.autonomy.AutonomyProperties;

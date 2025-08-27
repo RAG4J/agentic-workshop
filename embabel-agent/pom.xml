@@ -13,8 +13,7 @@
 	<description>Embabel agent implementation</description>
 
     <properties>
-        <embabel-agent.version>0.1.1-SNAPSHOT</embabel-agent.version>
-        <kotlin.version>2.1.0</kotlin.version>
+        <embabel-agent.version>0.1.1</embabel-agent.version>
     </properties>
 
 	<dependencies>
