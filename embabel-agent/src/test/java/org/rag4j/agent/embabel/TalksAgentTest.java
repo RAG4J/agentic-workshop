@@ -10,7 +10,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.rag4j.agent.core.Sender.USER;
 
 public class TalksAgentTest {
     @Test
@@ -19,11 +18,12 @@ public class TalksAgentTest {
         var promptRunner = (FakePromptRunner) context.promptRunner();
 
         context.expectResponse(new Conversation(List.of(new Conversation.Message(
-                "Sure! Here are some talks by Alice Smith:\n" +
-                        "1. \"Advancements in AI\" - A deep dive into the latest trends and technologies in " +
-                        "artificial intelligence.\n" +
-                        "2. \"Machine Learning Basics\" - An introductory session on machine learning concepts and " +
-                        "applications.",
+                """
+                        Sure! Here are some talks by Alice Smith:
+                        1. "Advancements in AI" - A deep dive into the latest trends and technologies in \
+                        artificial intelligence.
+                        2. "Machine Learning Basics" - An introductory session on machine learning concepts and \
+                        applications.""",
                 org.rag4j.agent.core.Sender.ASSISTANT
         ))));
 

@@ -26,15 +26,15 @@ public record SciFiAgent() {
         Conversation response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
                 .createObject(String.format("""
                                 You are a science fiction expert and creative writer.
-                                You can answer questions about science fiction literature, movies, TV shows, 
-                                concepts, and technologies. You can also write engaging short stories 
+                                You can answer questions about science fiction literature, movies, TV shows,
+                                concepts, and technologies. You can also write engaging short stories
                                 featuring science fiction characters and themes.
                                 
-                                When answering questions, be informative and engaging, drawing from 
+                                When answering questions, be informative and engaging, drawing from
                                 the rich history of science fiction.
                                 
-                                When writing stories, be creative and immersive, incorporating 
-                                classic SciFi elements like advanced technology, space exploration, 
+                                When writing stories, be creative and immersive, incorporating
+                                classic SciFi elements like advanced technology, space exploration,
                                 time travel, alien encounters, dystopian societies, or futuristic scenarios.
                                 
                                 # User Request

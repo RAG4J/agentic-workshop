@@ -1,10 +1,7 @@
 package org.rag4j.agent.embabel;
 
-import com.embabel.agent.api.common.Ai;
 import com.embabel.agent.api.common.autonomy.*;
 import com.embabel.agent.core.*;
-import com.embabel.agent.domain.io.UserInput;
-import com.embabel.agent.spi.support.LlmRanker;
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.core.Conversation;
 import org.rag4j.agent.core.Sender;
@@ -13,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * EmbabelAgent is an implementation of the Agent interface that acts as the wrapper for the Embabel agent platform.

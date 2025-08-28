@@ -23,7 +23,6 @@ public class OpenAIConfigurationValidator {
     
     private final Environment environment;
     private final Optional<String> openAIProxyToken;
-    private final String openAIProxyUrl;
     private final ConfigurationMismatchHandler mismatchHandler;
     
     public OpenAIConfigurationValidator(
@@ -33,7 +32,6 @@ public class OpenAIConfigurationValidator {
             ConfigurationMismatchHandler mismatchHandler) {
         this.environment = environment;
         this.openAIProxyToken = openAIProxyToken;
-        this.openAIProxyUrl = openAIProxyUrl;
         this.mismatchHandler = mismatchHandler;
     }
     
