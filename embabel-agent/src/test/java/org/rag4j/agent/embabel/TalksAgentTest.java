@@ -1,5 +1,6 @@
 package org.rag4j.agent.embabel;
 
+import com.embabel.agent.domain.io.UserInput;
 import com.embabel.agent.testing.unit.FakeOperationContext;
 import com.embabel.agent.testing.unit.FakePromptRunner;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ public class TalksAgentTest {
         var agent = new TalksAgent(tools);
 
         agent.answerQuestion(
-                new Conversation.Message("Can you give me all the talks from Alice Smith?", USER),
+                new UserInput("Can you give me all the talks from Alice Smith?"),
                 context
         );
 

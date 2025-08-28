@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: embabel
+    active:
     default: plain
   application:
     name: conference-agent

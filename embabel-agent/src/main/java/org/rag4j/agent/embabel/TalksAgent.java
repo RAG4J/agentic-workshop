@@ -5,9 +5,8 @@ import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.config.models.OpenAiModels;
+import com.embabel.agent.domain.io.UserInput;
 import org.rag4j.agent.core.Conversation;
-import org.rag4j.agent.embabel.model.TimeRequest;
-import org.rag4j.agent.embabel.model.TimeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public record TalksAgent(EmbabelConferenceTools tools) {
             description = "Answers a question about conference talks using tools to obtain the right talks. For questions about current time, use another action."
     )
     @Action
-    public Conversation answerQuestion(Conversation.Message question, OperationContext context) {
+    public Conversation answerQuestion(UserInput question, OperationContext context) {
         Conversation response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
                 .withToolObject(tools)
                 .createObject(String.format("""
@@ -33,28 +32,9 @@ public record TalksAgent(EmbabelConferenceTools tools) {
                                  %s
                                 
                                 """,
-                        question.content()
+                        question.getContent()
                 ).trim(), Conversation.class);
         logger.info("Response generated: {}", response.messages().getFirst().content());
         return response;
     }
-
-    @Action(toolGroups = {"mcp-time"})
-    public TimeResponse timeQuestion(TimeRequest timeRequest, OperationContext context) {
-        TimeResponse response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
-                .withToolObject(tools)
-                .createObject(String.format("""
-                         You will be given a request related to time.
-                         You have access to tools to get the current time.
-                         Your task is to use the tools to get the current time and return it.
-                        
-                         # Request
-                            Region: %s
-                            Question: %s
-                        
-                        """, timeRequest.region(), timeRequest.timeQuestion()).trim(), TimeResponse.class);
-        logger.info("Current time response generated: {}", response.currentTime());
-        return response;
-    }
-
 }

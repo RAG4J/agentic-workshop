@@ -1,5 +1,6 @@
 package org.rag4j.agent.embabel;
 
+import com.embabel.agent.api.common.autonomy.Autonomy;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.config.annotation.LoggingThemes;
 import com.embabel.agent.config.annotation.McpServers;
@@ -21,8 +22,8 @@ public class EmbabelAgentConfig {
     }
 
     @Bean(name = "orchestrator")
-    public Agent embabelAgent(AgentPlatform platform) {
-        return new EmbabelAgent(platform);
+    public Agent embabelAgent(AgentPlatform platform, Autonomy autonomy) {
+        return new EmbabelAgent(platform, autonomy);
     }
 
     @Bean
