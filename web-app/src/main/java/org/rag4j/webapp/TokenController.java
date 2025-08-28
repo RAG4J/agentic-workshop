@@ -2,6 +2,7 @@ package org.rag4j.webapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.rag4j.webapp.config.ConfigurationMismatchHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,18 +30,39 @@ public class TokenController {
     private static final Logger logger = LoggerFactory.getLogger(TokenController.class);
     private final String openAIProxyUrl;
     private final Optional<String> openAIProxyToken;
+    private final ConfigurationMismatchHandler mismatchHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TokenController(
             @Value("${openai.proxy.url}") String openAIProxyUrl,
-            @Value("${openai.proxy.token:#{null}}") Optional<String> openAIProxyToken
+            @Value("${openai.proxy.token:#{null}}") Optional<String> openAIProxyToken,
+            ConfigurationMismatchHandler mismatchHandler
     ) {
         this.openAIProxyUrl = openAIProxyUrl;
         this.openAIProxyToken = openAIProxyToken;
+        this.mismatchHandler = mismatchHandler;
     }
 
     @GetMapping("/token")
-    public String homePage(Model model) {
+    public String homePage(
+            Model model, 
+            @RequestParam(value = "configError", required = false) String configError) {
+        
+        // Check for configuration mismatch error
+        if ("true".equals(configError) && mismatchHandler.hasConfigurationMismatch()) {
+            String errorMessage = mismatchHandler.getConfigurationMismatchError();
+            model.addAttribute("error", "⚠️ Configuration Mismatch Detected: " + errorMessage);
+            model.addAttribute("configurationError", true);
+            
+            // Add additional guidance
+            model.addAttribute("configErrorDetails", 
+                "Please ensure that your environment variable OPENAI_API_KEY matches the " +
+                "openai.proxy.token property in application.yml, then restart the application.");
+            
+            // Clear the error after displaying it once
+            mismatchHandler.clearConfigurationMismatchError();
+        }
+        
         // Check if we have a token and validate it
         if (openAIProxyToken.isPresent() && !openAIProxyToken.get().trim().isEmpty()) {
             TokenValidationResult validation = validateExistingToken();

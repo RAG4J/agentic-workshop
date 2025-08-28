@@ -31,7 +31,7 @@ spring:
 openai:
   proxy:
     url: https://vfjv12h3xb.execute-api.eu-west-1.amazonaws.com
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTYzMDI0NjMsImV4cCI6MTc1NjMxMzI2M30.sm_9ONeHr1kYeHRC6uZDZpwQOeVKunN1umbgst7umPQ
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTYzNjIwMzYsImV4cCI6MTc1NjM3MjgzNn0.7ohnKZp6dDz6MZxt6tkGM62IFZB44kG7Ms72NgTwEzg
 embabel:
   agent:
     platform:

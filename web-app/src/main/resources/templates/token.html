@@ -38,6 +38,13 @@
             </div>
             <div th:if="${error}" class="alert alert-danger">
                 <p th:text="${error}" class="mb-0"></p>
+                <div th:if="${configurationError}" class="mt-2">
+                    <hr class="my-2">
+                    <small class="text-muted">
+                        <strong>Resolution Steps:</strong><br>
+                        <span th:text="${configErrorDetails}"></span>
+                    </small>
+                </div>
             </div>
             
             <!-- Token Request Form -->
