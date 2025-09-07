@@ -1,5 +1,6 @@
 package org.rag4j.agent.springai.multi;
 
+import io.modelcontextprotocol.client.McpSyncClient;
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.springai.ConferenceTalksTools;
 import org.rag4j.agent.springai.TalksAgent;
@@ -8,10 +9,13 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+
+import java.util.List;
 
 @Configuration
 @Profile("springai-multi")
@@ -28,9 +32,9 @@ public class SpringAIMultiAgentConfig {
     }
 
     @Bean(name = "conversationChatClient")
-    public ChatClient chatClient(ChatModel chatModel, ChatMemory chatMemory) {
+    public ChatClient chatClient(ChatModel chatModel, List<McpSyncClient> mcpSyncClients) {
         return ChatClient.builder(chatModel)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .defaultToolCallbacks(new SyncMcpToolCallbackProvider(mcpSyncClients))
                 .build();
     }
 

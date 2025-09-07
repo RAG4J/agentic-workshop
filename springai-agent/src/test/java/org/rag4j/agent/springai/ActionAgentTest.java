@@ -57,9 +57,9 @@ class ActionAgentTest {
             UserMessage userMsg = new UserMessage("Hi");
             AssistantMessage assistantMsg = new AssistantMessage("Hello");
             List<Message> messages = Arrays.asList(userMsg, assistantMsg);
-            when(chatMemory.get(ChatMemory.DEFAULT_CONVERSATION_ID)).thenReturn(messages);
+            when(chatMemory.get("userId")).thenReturn(messages);
             // when
-            Conversation conversation = actionAgent.convertChatMemoryToConversation(chatMemory);
+            Conversation conversation = actionAgent.convertChatMemoryToConversation("userId", chatMemory);
             // then
             assertEquals(2, conversation.messages().size());
             assertEquals("Hi", conversation.messages().get(0).content());
@@ -73,9 +73,9 @@ class ActionAgentTest {
         void convertChatMemoryToConversationThrowsForUnknownType() {
             // given
             SystemMessage unknownMsg = new SystemMessage("Unknown");
-            when(chatMemory.get(ChatMemory.DEFAULT_CONVERSATION_ID)).thenReturn(Collections.singletonList(unknownMsg));
+            when(chatMemory.get("userId")).thenReturn(Collections.singletonList(unknownMsg));
             // when & then
-            assertThrows(RuntimeException.class, () -> actionAgent.convertChatMemoryToConversation(chatMemory));
+            assertThrows(RuntimeException.class, () -> actionAgent.convertChatMemoryToConversation("userId", chatMemory));
         }
 
         @Test
@@ -84,7 +84,7 @@ class ActionAgentTest {
             // given
             when(chatMemory.get(ChatMemory.DEFAULT_CONVERSATION_ID)).thenReturn(Collections.emptyList());
             // when
-            Conversation conversation = actionAgent.convertChatMemoryToConversation(chatMemory);
+            Conversation conversation = actionAgent.convertChatMemoryToConversation("userId", chatMemory);
             // then
             assertTrue(conversation.messages().isEmpty());
         }

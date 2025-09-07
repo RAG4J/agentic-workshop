@@ -29,9 +29,9 @@ public abstract class ActionAgent implements Agent {
 
     protected abstract Conversation doInvoke(String userId, Conversation.Message userMessage);
 
-    protected Conversation convertChatMemoryToConversation(ChatMemory chatMemory) {
+    protected Conversation convertChatMemoryToConversation(String userId, ChatMemory chatMemory) {
         List<Conversation.Message> messages = new ArrayList<>();
-        for  (Message message : chatMemory.get(ChatMemory.DEFAULT_CONVERSATION_ID)) {
+        for  (Message message : chatMemory.get(userId)) {
             switch (message.getMessageType()) {
                 case MessageType.USER:
                     messages.add(new Conversation.Message(message.getText(), USER));

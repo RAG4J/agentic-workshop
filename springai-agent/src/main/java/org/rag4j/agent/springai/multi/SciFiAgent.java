@@ -5,6 +5,7 @@ import org.rag4j.agent.springai.ActionAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 
 public class SciFiAgent extends ActionAgent {
@@ -18,16 +19,16 @@ public class SciFiAgent extends ActionAgent {
     public Conversation doInvoke(String userId, Conversation.Message userMessage) {
         logger.info("SciFiAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
+                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(userId).build())
                 .system("""
                         You are a geek that knows everything about Science Fiction related topics and likes to answer questions about this.
                         Science Fiction is your only expertise, so you can not answer questions related to other topics.
                         If the question is about a non-scifi topic, just say you don't know anything about that subject.
                         """)
                 .user(userMessage.content())
-                .advisors(a -> a.param(ChatMemory.DEFAULT_CONVERSATION_ID, userId))
                 .call()
                 .content();
         logger.info("SpringAIAgent invoke content = {}", content);
-        return convertChatMemoryToConversation(chatMemory);
+        return convertChatMemoryToConversation(userId, chatMemory);
     }
 }

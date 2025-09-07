@@ -48,8 +48,9 @@ public class OpenAIReasoning implements Reasoning {
 
         prepareMessages(userMessage, conversation, createParamsBuilder);
 
+        ChatCompletion chatCompletion = this.openAIClient.chat().completions().create(createParamsBuilder.build());
         List<ChatCompletionMessage> messages =
-                this.openAIClient.chat().completions().create(createParamsBuilder.build()).choices().stream()
+                chatCompletion.choices().stream()
                         .map(ChatCompletion.Choice::message)
                         .toList();
 

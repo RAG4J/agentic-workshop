@@ -1,10 +1,16 @@
 spring:
   profiles:
-    active: embabel
+    active: springai
     default: plain
   application:
     name: conference-agent
   ai:
+    chat:
+      observations:
+        log-prompt: true
+        log-completion: true
+        include-content: true
+
     openai:
       project-id: workshop
       api-key: ${openai.proxy.token}
@@ -31,7 +37,7 @@ spring:
 openai:
   proxy:
     url: https://vfjv12h3xb.execute-api.eu-west-1.amazonaws.com
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTYzNzU5OTIsImV4cCI6MTc1NjM4Njc5Mn0.sORlVJ4GTJhGaIP50D7wO5_jrYfkuN-I54pyipQbe1A
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTcyNzAwOTUsImV4cCI6MTc1NzI4MDg5NX0.E3ClcWR1lso-uXyZqsh5Sa-Xd8Mm7vj41SsjI7mw7p0
 embabel:
   agent:
     platform:

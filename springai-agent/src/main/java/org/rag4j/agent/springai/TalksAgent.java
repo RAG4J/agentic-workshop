@@ -4,6 +4,7 @@ import org.rag4j.agent.core.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 
 /**
@@ -24,6 +25,7 @@ public class TalksAgent extends ActionAgent {
         logger.info("SpringAIAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
                 .tools(conferenceTalksTools)
+                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(userId).build())
                 .system("You are an AI agent that answers questions about conference talks. Do not answer generic questions, even if you know the answers. Stick to information about conferences and the program that is available through your tools.")
                 .user(userMessage.content())
                 .advisors(a -> a.param(ChatMemory.DEFAULT_CONVERSATION_ID, userId))
@@ -31,6 +33,6 @@ public class TalksAgent extends ActionAgent {
                 .content();
         assert content != null;
         logger.info("SpringAIAgent invoke content = {}", content);
-        return convertChatMemoryToConversation(chatMemory);
+        return convertChatMemoryToConversation(userId, chatMemory);
     }
 }
