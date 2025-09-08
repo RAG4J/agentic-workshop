@@ -1,0 +1,38 @@
+<configuration scan="true">
+
+    <!-- Console appender for everything -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File appender just for OpenTelemetry spans -->
+    <appender name="OTEL_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/traces.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger sends everything to CONSOLE -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- OTel span exporter logger sends to OTEL_FILE instead -->
+    <logger name="io.opentelemetry.exporter.logging" level="DEBUG" additivity="false">
+        <appender-ref ref="OTEL_FILE"/>
+    </logger>
+
+    <logger name="org.springframework.ai.chat.client.observation" level="DEBUG" additivity="false">
+        <appender-ref ref="OTEL_FILE"/>
+    </logger>
+
+    <logger name="org.springframework.ai" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+    </logger>
+
+
+</configuration>

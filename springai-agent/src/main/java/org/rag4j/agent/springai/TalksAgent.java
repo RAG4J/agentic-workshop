@@ -1,6 +1,7 @@
 package org.rag4j.agent.springai;
 
 import org.rag4j.agent.core.Conversation;
+import org.rag4j.agent.springai.advisor.ObservabilityAdvisor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
@@ -14,10 +15,12 @@ import org.springframework.ai.chat.memory.ChatMemory;
 public class TalksAgent extends ActionAgent {
     private static final Logger logger = LoggerFactory.getLogger(TalksAgent.class);
     private final ConferenceTalksTools conferenceTalksTools;
+    private final ObservabilityAdvisor observabilityAdvisor;
 
-    public TalksAgent(ChatClient chatClient, ChatMemory chatMemory, ConferenceTalksTools conferenceTalksTools) {
+    public TalksAgent(ChatClient chatClient, ChatMemory chatMemory, ConferenceTalksTools conferenceTalksTools, ObservabilityAdvisor observabilityAdvisor) {
         super(chatClient, chatMemory);
         this.conferenceTalksTools = conferenceTalksTools;
+        this.observabilityAdvisor = observabilityAdvisor;
     }
 
     @Override
@@ -25,10 +28,9 @@ public class TalksAgent extends ActionAgent {
         logger.info("SpringAIAgent invoke userId = {}, userMessage = {}", userId, userMessage);
         String content = this.chatClient.prompt()
                 .tools(conferenceTalksTools)
-                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(userId).build())
+                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(userId).build(), observabilityAdvisor)
                 .system("You are an AI agent that answers questions about conference talks. Do not answer generic questions, even if you know the answers. Stick to information about conferences and the program that is available through your tools.")
                 .user(userMessage.content())
-                .advisors(a -> a.param(ChatMemory.DEFAULT_CONVERSATION_ID, userId))
                 .call()
                 .content();
         assert content != null;

@@ -2,6 +2,7 @@ package org.rag4j.agent.springai;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rag4j.agent.springai.advisor.ObservabilityAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 
@@ -16,7 +17,8 @@ class TalksAgentTest {
         ChatClient chatClient = mock(ChatClient.class);
         ChatMemory chatMemory = mock(ChatMemory.class);
         ConferenceTalksTools conferenceTalksTools = mock(ConferenceTalksTools.class);
-        TalksAgent agent = new TalksAgent(chatClient, chatMemory, conferenceTalksTools);
+        ObservabilityAdvisor observabilityAdvisor = mock(ObservabilityAdvisor.class);
+        TalksAgent agent = new TalksAgent(chatClient, chatMemory, conferenceTalksTools, observabilityAdvisor);
         
         assertNotNull(agent);
     }

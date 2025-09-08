@@ -39,7 +39,7 @@ class OpenAIReasoningTest {
             when(builder.baseUrl(anyString())).thenReturn(builder);
             when(builder.build()).thenReturn(mockClient);
             mockedStatic.when(OpenAIOkHttpClient::builder).thenReturn(builder);
-            openAIReasoning = new OpenAIReasoning("http://localhost", "token", systemPrompt);
+            openAIReasoning = new OpenAIReasoning(mockClient, systemPrompt);
         }
     }
 

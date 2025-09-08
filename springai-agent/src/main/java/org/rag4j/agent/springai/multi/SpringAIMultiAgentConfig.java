@@ -4,8 +4,8 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.springai.ConferenceTalksTools;
 import org.rag4j.agent.springai.TalksAgent;
+import org.rag4j.agent.springai.advisor.ObservabilityAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
@@ -54,8 +54,9 @@ public class SpringAIMultiAgentConfig {
     @Bean
     public TalksAgent springAIAgent(@Qualifier("conversationChatClient") ChatClient chatClient,
                                     ChatMemory chatMemory,
-                                    ConferenceTalksTools conferenceTalksTools) {
-        return new TalksAgent(chatClient, chatMemory, conferenceTalksTools);
+                                    ConferenceTalksTools conferenceTalksTools,
+                                    ObservabilityAdvisor observabilityAdvisor) {
+        return new TalksAgent(chatClient, chatMemory, conferenceTalksTools, observabilityAdvisor);
     }
 
     @Bean

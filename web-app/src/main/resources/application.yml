@@ -6,11 +6,13 @@ spring:
     name: conference-agent
   ai:
     chat:
+      client:
+        observations:
+          log-prompt: true
       observations:
         log-prompt: true
         log-completion: true
-        include-content: true
-
+        include-error-logging: true
     openai:
       project-id: workshop
       api-key: ${openai.proxy.token}
@@ -33,11 +35,15 @@ spring:
                 - --rm
                 - mcp/time
                 - --local-timezone=America/New_York
+    tools:
+      observations:
+        include-content: true
 
 openai:
   proxy:
     url: https://vfjv12h3xb.execute-api.eu-west-1.amazonaws.com
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTcyNzAwOTUsImV4cCI6MTc1NzI4MDg5NX0.E3ClcWR1lso-uXyZqsh5Sa-Xd8Mm7vj41SsjI7mw7p0
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTczNDI0NDcsImV4cCI6MTc1NzM1MzI0N30.NNdf2L1PziqmsgGWVZ1KcIzj1sv6u3Ucv7jDI9qfFLM
+
 embabel:
   agent:
     platform:
@@ -49,6 +55,31 @@ embabel:
   agent-platform:
     ranking:
       llm: gpt-4.1-mini
-logging:
-  level:
-    root: INFO
+
+observability:
+  enabled: true
+  log-directory: ${user.dir}/observe  # relative to project root, or use absolute path
+  log-requests: true
+  log-responses: true
+  log-errors: true
+
+management:
+  observations:
+    enable:
+      spring:
+        ai: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0    # capture all spans for the demo
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+agent:
+  plain:
+    reasoning:
+      max-reasoning-steps: 5
+    memory:
+      max-conversation-size: 10

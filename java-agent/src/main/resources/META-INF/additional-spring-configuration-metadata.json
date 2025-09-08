@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "agent.plain.reasoning.max-reasoning-steps",
+      "type": "java.lang.String",
+      "description": "Configure max reasoning steps for the agents."
+    },
+    {
+      "name": "agent.plain.memory.max-conversation-size",
+      "type": "java.lang.String",
+      "description": "Configure maximum number of messages in the memory."
+    }
+  ]
+}

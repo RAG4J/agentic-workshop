@@ -2,6 +2,7 @@ package org.rag4j.agent;
 
 import java.util.List;
 
+import com.openai.client.OpenAIClient;
 import org.rag4j.agent.core.Agent;
 import org.rag4j.agent.core.ConferenceTalksRepository;
 import org.rag4j.agent.memory.Memory;
@@ -22,19 +23,17 @@ import org.springframework.context.annotation.Profile;
 public class PlainAgentConfig {
 
     @Bean(name = "orchestrator")
-    public Agent orchestratorAgent(
-            @Value("${openai.proxy.url}") String openAIProxyUrl,
-            @Value("${openai.proxy.token}") String openAIProxyToken,
-            Memory memory,
-            @Value("${agent.plain.reasoning.max-steps: 5}") int maxReasoningSteps,
-            ToolRegistry toolRegistry) {
+    public Agent orchestratorAgent(OpenAIClient openAIClient,
+                                   Memory memory,
+                                   PlainAgentReasoningConfigProperties agentConfigProperties,
+                                   ToolRegistry toolRegistry) {
 
         SystemPrompt systemPrompt = new SystemPrompt(
                 "Conference Talks Agent",
                 "You are an AI agent that answers questions about conference talks.",
                 toolRegistry);
-        OpenAIReasoning openAIReasoning = new OpenAIReasoning(openAIProxyUrl, openAIProxyToken, systemPrompt);
+        OpenAIReasoning openAIReasoning = new OpenAIReasoning(openAIClient, systemPrompt);
 
-        return new PlainJavaAgent(openAIReasoning, memory, maxReasoningSteps, toolRegistry);
+        return new PlainJavaAgent(openAIReasoning, memory, agentConfigProperties.getMaxReasoningSteps(), toolRegistry);
     }
 }
