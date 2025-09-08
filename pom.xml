@@ -34,6 +34,7 @@
         <module>java-agent</module>
         <module>springai-agent</module>
         <module>web-app</module>
+        <module>evals-web-app</module>
     </modules>
 
     <properties>
