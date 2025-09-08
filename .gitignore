@@ -36,3 +36,6 @@ build/
 .java-version
 
 .run
+
+logs/
+observe/
