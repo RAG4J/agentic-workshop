@@ -3,6 +3,7 @@ package org.rag4j.evals.controller;
 import org.rag4j.evals.model.EvaluationRun;
 import org.rag4j.evals.model.RunConfiguration;
 import org.rag4j.evals.service.EvaluationDataService;
+import org.rag4j.evals.service.EvaluationRunnerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,13 @@ public class RunController {
     private static final Logger logger = LoggerFactory.getLogger(RunController.class);
     
     private final EvaluationDataService dataService;
+    private final EvaluationRunnerService evaluationRunnerService;
     
     @Autowired
-    public RunController(EvaluationDataService dataService) {
+    public RunController(EvaluationDataService dataService, 
+                        EvaluationRunnerService evaluationRunnerService) {
         this.dataService = dataService;
+        this.evaluationRunnerService = evaluationRunnerService;
     }
     
     @GetMapping
@@ -41,6 +45,8 @@ public class RunController {
     public String newRunForm(Model model) {
         model.addAttribute("run", new EvaluationRun());
         model.addAttribute("configuration", new RunConfiguration());
+        model.addAttribute("availableQuestions", evaluationRunnerService.getAvailableQuestionCount());
+        model.addAttribute("serviceReady", evaluationRunnerService.isReady());
         return "evals/new-run";
     }
     
@@ -48,6 +54,7 @@ public class RunController {
     public String createRun(
             @Validated @ModelAttribute("run") EvaluationRun run,
             @ModelAttribute("configuration") RunConfiguration configuration,
+            @RequestParam(value = "executeImmediately", defaultValue = "false") boolean executeImmediately,
             RedirectAttributes redirectAttributes) {
         
         try {
@@ -55,11 +62,22 @@ public class RunController {
             run.setId(UUID.randomUUID().toString());
             run.setConfiguration(configuration);
             
-            // Save the run
-            EvaluationRun savedRun = dataService.saveRun(run);
+            // Create the run with questions from input file
+            EvaluationRun savedRun = evaluationRunnerService.createRunWithQuestions(run);
             
-            logger.info("Created new evaluation run: {} - {}", savedRun.getId(), savedRun.getName());
-            redirectAttributes.addFlashAttribute("success", "Evaluation run created successfully");
+            logger.info("Created new evaluation run: {} - {} with {} records", 
+                       savedRun.getId(), savedRun.getName(), savedRun.getTotalRecords());
+            
+            String successMessage = String.format("Evaluation run created successfully with %d questions", 
+                                                 savedRun.getTotalRecords());
+            
+            // Execute immediately if requested
+            if (executeImmediately) {
+                evaluationRunnerService.executeRunAsync(savedRun.getId());
+                successMessage += ". Execution started in background.";
+            }
+            
+            redirectAttributes.addFlashAttribute("success", successMessage);
             
             return "redirect:/evaluations?runId=" + savedRun.getId();
             
@@ -176,6 +194,24 @@ public class RunController {
             logger.error("Failed to duplicate evaluation run {}: {}", id, e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Failed to duplicate evaluation run: " + e.getMessage());
             return "redirect:/runs";
+        }
+    }
+    
+    @PostMapping("/{id}/execute")
+    public String executeRun(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            // Execute the run asynchronously
+            evaluationRunnerService.executeRunAsync(id);
+            
+            logger.info("Started execution of evaluation run: {}", id);
+            redirectAttributes.addFlashAttribute("success", "Evaluation run execution started in background");
+            
+            return "redirect:/evaluations?runId=" + id;
+            
+        } catch (Exception e) {
+            logger.error("Failed to execute evaluation run {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Failed to execute evaluation run: " + e.getMessage());
+            return "redirect:/runs/" + id;
         }
     }
 }

@@ -39,3 +39,5 @@ build/
 
 logs/
 observe/
+evals-web-app/src/main/data/evaluation-records.json
+evals-web-app/src/main/data/evaluation-runs.json

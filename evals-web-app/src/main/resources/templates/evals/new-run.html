@@ -18,6 +18,19 @@
                         <!-- Alerts -->
                         <div th:replace="~{fragments/template :: alerts}"></div>
                         
+                        <!-- Service Status Info -->
+                        <div class="alert alert-info" th:if="${availableQuestions > 0}">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Ready to create run:</strong> 
+                            <span th:text="${availableQuestions}">0</span> questions available from input file.
+                        </div>
+                        
+                        <div class="alert alert-warning" th:if="${availableQuestions == 0}">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>No questions found:</strong> 
+                            Please ensure the input questions file is available in src/main/data/input-questions.json
+                        </div>
+                        
                         <form th:action="@{/runs/new}" method="post" th:object="${run}">
                             <!-- Basic Information -->
                             <div class="row mb-4">
@@ -61,14 +74,14 @@
                                 <div class="col-md-6">
                                     <label for="totalRecords" class="form-label">Total Records</label>
                                     <input type="number" class="form-control" id="totalRecords" th:field="*{totalRecords}" 
-                                           min="0" value="0" placeholder="0">
-                                    <div class="form-text">Expected number of evaluation records</div>
+                                           min="0" th:value="${availableQuestions}" readonly>
+                                    <div class="form-text">Will be set automatically from input questions file (<span th:text="${availableQuestions}">0</span> questions)</div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="completedRecords" class="form-label">Completed Records</label>
                                     <input type="number" class="form-control" id="completedRecords" th:field="*{completedRecords}" 
-                                           min="0" value="0" placeholder="0">
-                                    <div class="form-text">Number of records already completed</div>
+                                           min="0" value="0" readonly>
+                                    <div class="form-text">Will be updated during execution</div>
                                 </div>
                             </div>
                             
@@ -145,12 +158,39 @@
                                 </div>
                             </div>
                             
+                            <!-- Execution Options -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="text-primary">
+                                        <i class="fas fa-play me-2"></i>
+                                        Execution Options
+                                    </h5>
+                                    <hr>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="executeImmediately" 
+                                               name="executeImmediately" value="true">
+                                        <label class="form-check-label" for="executeImmediately">
+                                            <strong>Execute immediately after creation</strong>
+                                        </label>
+                                        <div class="form-text">
+                                            If checked, the AgentRunner will start processing questions immediately 
+                                            after the run is created. This will generate responses for all questions in the background.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Action Buttons -->
                             <div class="d-flex justify-content-between">
                                 <a href="#" th:href="@{/runs}" class="btn btn-outline-secondary">
                                     <i class="fas fa-times me-1"></i>Cancel
                                 </a>
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-success" th:disabled="${availableQuestions == 0}">
                                     <i class="fas fa-save me-1"></i>Create Run
                                 </button>
                             </div>

@@ -116,6 +116,10 @@
                         <a href="#" id="viewRecordsLink" class="list-group-item list-group-item-action">
                             <i class="fas fa-table me-2 text-primary"></i>View Records
                         </a>
+                        <button type="button" class="list-group-item list-group-item-action text-success" 
+                                onclick="executeRun()">
+                            <i class="fas fa-play me-2"></i>Execute Run
+                        </button>
                         <button type="button" class="list-group-item list-group-item-action text-danger" 
                                 onclick="confirmDeleteRun()">
                             <i class="fas fa-trash me-2"></i>Delete Run
@@ -155,6 +159,22 @@
                 methodInput.name = '_method';
                 methodInput.value = 'DELETE';
                 form.appendChild(methodInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
+        }
+        
+        // Handle execute run
+        function executeRun() {
+            if (currentRunId && confirm('Execute this run? This will start generating agent responses for all questions.')) {
+                // Create form for execute request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/runs/${currentRunId}/execute`;
                 
                 document.body.appendChild(form);
                 form.submit();

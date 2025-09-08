@@ -89,6 +89,7 @@ The application comes with sample evaluation data that includes:
 Data is stored in JSON files in the `src/main/data` directory:
 - `evaluation-records.json` - All evaluation records
 - `evaluation-runs.json` - All evaluation runs
+- `input-questions.json` - Input questions for creating new evaluation runs
 
 The application automatically creates sample data on first run if these files don't exist.
 
@@ -96,6 +97,7 @@ The application automatically creates sample data on first run if these files do
 
 Key configuration in `application.yml`:
 - `evals.data.directory` - Directory for data files (default: `evals-web-app/src/main/data`)
+- `evals.questions.filename` - Input questions filename (default: `input-questions.json`)
 - `server.port` - Application port (default: 8081)
 
 ## API Endpoints

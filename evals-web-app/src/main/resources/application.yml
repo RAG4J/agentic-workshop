@@ -26,6 +26,8 @@ spring:
 evals:
   data:
     directory: evals-web-app/src/main/data # Directory for storing evaluation data files
+  questions:
+    filename: input-questions.json # Filename for input questions (within data directory)
 
 # Server configuration
 server:
