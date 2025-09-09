@@ -13,7 +13,19 @@
 	<description>Web application for evaluation management</description>
 
 	<dependencies>
-		<!-- Spring Boot Web dependencies -->
+        <!-- Internal dependencies -->
+        <dependency>
+            <groupId>org.rag4j</groupId>
+            <artifactId>core-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.rag4j</groupId>
+            <artifactId>springai-agent</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Spring Boot Web dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -38,30 +50,6 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-core</artifactId>
-        </dependency>
-
-        <!-- Actuator for health checks and monitoring -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        
-        <!-- Core Micrometer Observation API -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-observation</artifactId>
-        </dependency>
-
-        <!-- Micrometer Tracing with OpenTelemetry bridge -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-otel</artifactId>
-        </dependency>
-
-        <!-- Export spans to the application log -->
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-exporter-logging</artifactId>
         </dependency>
 
         <!-- JSON processing -->

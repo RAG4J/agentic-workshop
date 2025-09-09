@@ -1,11 +1,14 @@
 package org.rag4j.evals.service;
 
+import org.rag4j.agent.core.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Dummy AgentRunner service that generates responses to questions.
@@ -15,19 +18,12 @@ import java.util.Random;
 public class AgentRunner {
     
     private static final Logger logger = LoggerFactory.getLogger(AgentRunner.class);
-    private final Random random = new Random();
-    
-    // Dummy responses for demonstration
-    private static final List<String> DUMMY_RESPONSES = List.of(
-        "Based on my analysis of the available information, I can provide the following response: This appears to be related to conference talks and presentations.",
-        "After reviewing the relevant data, I believe this question pertains to speaker information and talk topics in our conference database.",
-        "According to my understanding of the context, this seems to involve AI-related presentations and development topics.",
-        "From the information available, I can see this relates to technical talks, particularly around development tools and methodologies.",
-        "This question appears to be asking about specific speakers and their areas of expertise in the conference lineup.",
-        "Based on the pattern of questions, this seems to involve categorizing talks by topic and identifying relevant speakers.",
-        "My analysis suggests this is related to finding talks within specific technical domains or subject areas."
-    );
-    
+    private final Agent agent;
+
+    public AgentRunner(@Qualifier("orchestrator") Agent agent) {
+        this.agent = agent;
+    }
+
     /**
      * Generates a response to the given question.
      * This is a dummy implementation that returns mock responses.
@@ -37,50 +33,22 @@ public class AgentRunner {
      */
     public String generateResponse(String question) {
         logger.info("Processing question: {}", question);
-        
-        // Simulate some processing time
-        try {
-            Thread.sleep(100 + random.nextInt(400)); // 100-500ms delay
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            logger.warn("Interrupted while processing question", e);
-        }
-        
-        // Select a random dummy response
-        String response = DUMMY_RESPONSES.get(random.nextInt(DUMMY_RESPONSES.size()));
-        
+
         // Add some question-specific context to make it more realistic
-        String contextualResponse = addContextualElements(question, response);
+        String response = agent.invoke(UUID.randomUUID().toString(), new org.rag4j.agent.core.Conversation.Message(question, org.rag4j.agent.core.Sender.USER))
+                .messages().stream()
+                .filter(msg -> msg.sender() == org.rag4j.agent.core.Sender.ASSISTANT)
+                .map(org.rag4j.agent.core.Conversation.Message::content)
+                .reduce((first, second) -> second) // Get the last assistant message
+                .orElse("I'm not sure how to answer that right now.");
         
         logger.info("Generated response for question '{}': {}", 
                    question.length() > 50 ? question.substring(0, 50) + "..." : question,
-                   contextualResponse.length() > 100 ? contextualResponse.substring(0, 100) + "..." : contextualResponse);
+                   response.length() > 100 ? response.substring(0, 100) + "..." : response);
         
-        return contextualResponse;
+        return response;
     }
-    
-    /**
-     * Adds contextual elements to the response based on the question content.
-     */
-    private String addContextualElements(String question, String baseResponse) {
-        String lowerQuestion = question.toLowerCase();
-        
-        // Add specific context based on question keywords
-        if (lowerQuestion.contains("speaker") || lowerQuestion.contains("who")) {
-            return baseResponse + " The speaker information should be available in our conference database.";
-        } else if (lowerQuestion.contains("how many") || lowerQuestion.contains("count")) {
-            return baseResponse + " I would need to count the relevant entries to provide an accurate number.";
-        } else if (lowerQuestion.contains("what") && (lowerQuestion.contains("talk") || lowerQuestion.contains("speak"))) {
-            return baseResponse + " This involves analyzing talk topics and abstracts for relevant content.";
-        } else if (lowerQuestion.contains("development") || lowerQuestion.contains("ide")) {
-            return baseResponse + " This relates to development tools and programming environments.";
-        } else if (lowerQuestion.contains("challenge") || lowerQuestion.contains("coding")) {
-            return baseResponse + " Programming challenges and coding exercises are common conference topics.";
-        } else {
-            return baseResponse + " I'll need to search through the available data to find the most relevant information.";
-        }
-    }
-    
+
     /**
      * Generates responses for a batch of questions.
      * This can be useful for processing multiple questions efficiently.

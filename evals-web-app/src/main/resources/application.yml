@@ -1,4 +1,8 @@
 spring:
+  profiles:
+    active:
+    default: springai
+
   application:
     name: evals-web-app
 
@@ -21,6 +25,16 @@ spring:
       static-locations: classpath:/static/
       cache:
         period: 0 # Disable caching for development
+  ai:
+    openai:
+      project-id: workshop
+      api-key: ${openai.proxy.token}
+
+openai:
+  proxy:
+    url: https://vfjv12h3xb.execute-api.eu-west-1.amazonaws.com
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3R1ZGVudCIsImRlc2NyaXB0aW9uIjoid29ya3Nob3AiLCJpYXQiOjE3NTczNTU2NzUsImV4cCI6MTc1NzM2NjQ3NX0.vBTsnP3xGVV-UKYfamdkSM8RFuKwRgz4zG0NSffA4OE
+
 
 # Custom application properties
 evals:
