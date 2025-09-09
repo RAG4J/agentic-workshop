@@ -3,6 +3,7 @@ package org.rag4j.evals.controller;
 import org.rag4j.evals.model.EvaluationRecord;
 import org.rag4j.evals.model.EvaluationRun;
 import org.rag4j.evals.model.ScoreType;
+import org.rag4j.evals.service.AccuracyService;
 import org.rag4j.evals.service.EvaluationDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,12 @@ public class EvaluationController {
     private static final Logger logger = LoggerFactory.getLogger(EvaluationController.class);
     
     private final EvaluationDataService dataService;
+    private final AccuracyService accuracyService;
     
     @Autowired
-    public EvaluationController(EvaluationDataService dataService) {
+    public EvaluationController(EvaluationDataService dataService, AccuracyService accuracyService) {
         this.dataService = dataService;
+        this.accuracyService = accuracyService;
     }
     
     @GetMapping
@@ -81,6 +84,9 @@ public class EvaluationController {
             ScoreType score = ScoreType.fromString(scoreStr);
             EvaluationRecord updatedRecord = dataService.updateHumanScore(id, score, reason);
             
+            // Recalculate accuracy for the run after updating human score
+            accuracyService.calculateAndUpdateAccuracy(updatedRecord.getRunId());
+            
             logger.info("Updated human score for record {}: {} - {}", id, score, reason);
             redirectAttributes.addFlashAttribute("success", "Human score updated successfully");
             
@@ -119,6 +125,12 @@ public class EvaluationController {
             String runId = recordOpt.map(EvaluationRecord::getRunId).orElse(null);
             
             dataService.deleteRecord(id);
+            
+            // Recalculate accuracy for the run after deleting a record
+            if (runId != null) {
+                accuracyService.calculateAndUpdateAccuracy(runId);
+            }
+            
             logger.info("Deleted evaluation record: {}", id);
             redirectAttributes.addFlashAttribute("success", "Record deleted successfully");
             

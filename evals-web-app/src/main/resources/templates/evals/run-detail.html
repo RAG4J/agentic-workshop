@@ -182,6 +182,44 @@
                         </dl>
                     </div>
                 </div>
+                
+                <!-- Accuracy Metrics Card -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Accuracy Metrics
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Human Score Accuracy:</span>
+                                    <span th:class="${run.humanAccuracyBadgeClass}" th:text="${run.formattedHumanScoreAccuracy}">N/A</span>
+                                </div>
+                                <div class="mt-1">
+                                    <small class="text-muted">Percentage of responses rated as "Good" by human evaluators</small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">LLM Rating Accuracy:</span>
+                                    <span th:class="${run.llmAccuracyBadgeClass}" th:text="${run.formattedLlmRatingAccuracy}">N/A</span>
+                                </div>
+                                <div class="mt-1">
+                                    <small class="text-muted">Percentage of cases where human and LLM scores agree</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-3 mb-0" th:if="${run.humanScoreAccuracy == null or run.llmRatingAccuracy == null}">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>Accuracy metrics will be calculated automatically as human scores are added to evaluation records.</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

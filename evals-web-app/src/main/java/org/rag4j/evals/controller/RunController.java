@@ -2,6 +2,7 @@ package org.rag4j.evals.controller;
 
 import org.rag4j.evals.model.EvaluationRun;
 import org.rag4j.evals.model.RunConfiguration;
+import org.rag4j.evals.service.AccuracyService;
 import org.rag4j.evals.service.EvaluationDataService;
 import org.rag4j.evals.service.EvaluationRunnerService;
 import org.slf4j.Logger;
@@ -28,17 +29,31 @@ public class RunController {
     
     private final EvaluationDataService dataService;
     private final EvaluationRunnerService evaluationRunnerService;
+    private final AccuracyService accuracyService;
     
     @Autowired
     public RunController(EvaluationDataService dataService, 
-                        EvaluationRunnerService evaluationRunnerService) {
+                        EvaluationRunnerService evaluationRunnerService,
+                        AccuracyService accuracyService) {
         this.dataService = dataService;
         this.evaluationRunnerService = evaluationRunnerService;
+        this.accuracyService = accuracyService;
     }
     
     @GetMapping
     public String runsList(Model model) {
         List<EvaluationRun> runs = dataService.getAllRuns();
+        
+        // Ensure accuracy is calculated for all runs
+        for (EvaluationRun run : runs) {
+            if (run.getHumanScoreAccuracy() == null || run.getLlmRatingAccuracy() == null) {
+                accuracyService.calculateAndUpdateAccuracy(run.getId());
+            }
+        }
+        
+        // Refresh runs list to get updated accuracy values
+        runs = dataService.getAllRuns();
+        
         model.addAttribute("runs", runs);
         logger.info("Displaying {} evaluation runs", runs.size());
         return "evals/runs-list";
@@ -91,6 +106,12 @@ public class RunController {
         
         if (runOpt.isPresent()) {
             EvaluationRun run = runOpt.get();
+            
+            // Ensure accuracy is calculated for this run
+            if (run.getHumanScoreAccuracy() == null || run.getLlmRatingAccuracy() == null) {
+                run = accuracyService.calculateAndUpdateAccuracy(run.getId());
+            }
+            
             model.addAttribute("run", run);
             
             // Get associated records count

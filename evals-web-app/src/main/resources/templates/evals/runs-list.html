@@ -76,6 +76,20 @@
                                 Model: <span th:text="${run.configuration.modelName ?: 'Not specified'}">Model</span>
                             </small>
                         </div>
+                        
+                        <!-- Accuracy Information -->
+                        <div class="mt-3">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Human Score Accuracy:</small>
+                                    <span th:class="${run.humanAccuracyBadgeClass}" th:text="${run.formattedHumanScoreAccuracy}">N/A</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">LLM Rating Accuracy:</small>
+                                    <span th:class="${run.llmAccuracyBadgeClass}" th:text="${run.formattedLlmRatingAccuracy}">N/A</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer bg-transparent">
                         <div class="btn-group w-100" role="group">

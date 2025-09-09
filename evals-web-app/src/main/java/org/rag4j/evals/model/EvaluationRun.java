@@ -41,6 +41,12 @@ public class EvaluationRun {
     @JsonProperty("configuration")
     private RunConfiguration configuration;
     
+    @JsonProperty("humanScoreAccuracy")
+    private Double humanScoreAccuracy;
+    
+    @JsonProperty("llmRatingAccuracy")
+    private Double llmRatingAccuracy;
+    
     // Default constructor
     public EvaluationRun() {
         this.createdAt = LocalDateTime.now();
@@ -128,6 +134,22 @@ public class EvaluationRun {
         this.configuration = configuration;
     }
     
+    public Double getHumanScoreAccuracy() {
+        return humanScoreAccuracy;
+    }
+    
+    public void setHumanScoreAccuracy(Double humanScoreAccuracy) {
+        this.humanScoreAccuracy = humanScoreAccuracy;
+    }
+    
+    public Double getLlmRatingAccuracy() {
+        return llmRatingAccuracy;
+    }
+    
+    public void setLlmRatingAccuracy(Double llmRatingAccuracy) {
+        this.llmRatingAccuracy = llmRatingAccuracy;
+    }
+    
     // Utility methods
     @JsonIgnore
     public double getCompletionPercentage() {
@@ -145,6 +167,34 @@ public class EvaluationRun {
             case FAILED -> "badge bg-danger";
             case CANCELLED -> "badge bg-secondary";
         };
+    }
+    
+    @JsonIgnore
+    public String getFormattedHumanScoreAccuracy() {
+        if (humanScoreAccuracy == null) return "N/A";
+        return String.format("%.1f%%", humanScoreAccuracy * 100);
+    }
+    
+    @JsonIgnore
+    public String getFormattedLlmRatingAccuracy() {
+        if (llmRatingAccuracy == null) return "N/A";
+        return String.format("%.1f%%", llmRatingAccuracy * 100);
+    }
+    
+    @JsonIgnore
+    public String getHumanAccuracyBadgeClass() {
+        if (humanScoreAccuracy == null) return "badge bg-secondary";
+        if (humanScoreAccuracy >= 0.8) return "badge bg-success";
+        if (humanScoreAccuracy >= 0.6) return "badge bg-warning";
+        return "badge bg-danger";
+    }
+    
+    @JsonIgnore
+    public String getLlmAccuracyBadgeClass() {
+        if (llmRatingAccuracy == null) return "badge bg-secondary";
+        if (llmRatingAccuracy >= 0.8) return "badge bg-success";
+        if (llmRatingAccuracy >= 0.6) return "badge bg-warning";
+        return "badge bg-danger";
     }
     
     @Override

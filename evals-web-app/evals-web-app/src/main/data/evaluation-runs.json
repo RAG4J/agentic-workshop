@@ -1,0 +1,25 @@
+[ {
+  "id" : "run-001",
+  "name" : "GPT-4 Baseline Evaluation",
+  "description" : "Initial evaluation of GPT-4 responses on general knowledge questions.",
+  "status" : "CREATED",
+  "createdAt" : "2025-09-09 14:10:35",
+  "completedAt" : null,
+  "totalRecords" : 2,
+  "completedRecords" : 2,
+  "configuration" : null,
+  "humanScoreAccuracy" : 0.5,
+  "llmRatingAccuracy" : 1.0
+}, {
+  "id" : "run-002",
+  "name" : "Recipe Instructions Test",
+  "description" : "Testing model performance on cooking instruction generation.",
+  "status" : "CREATED",
+  "createdAt" : "2025-09-09 14:10:35",
+  "completedAt" : null,
+  "totalRecords" : 1,
+  "completedRecords" : 0,
+  "configuration" : null,
+  "humanScoreAccuracy" : 0.0,
+  "llmRatingAccuracy" : 0.0
+} ]

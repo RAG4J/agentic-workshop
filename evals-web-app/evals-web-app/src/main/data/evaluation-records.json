@@ -1,0 +1,34 @@
+[ {
+  "id" : "fde3068e-e0c6-431f-b5ce-02b4e8f3266d",
+  "runId" : "run-001",
+  "input" : "What is the capital of France?",
+  "response" : "The capital of France is Paris.",
+  "llmScore" : "Good",
+  "llmReason" : "Response is accurate and concise.",
+  "humanScore" : "Good",
+  "humanReason" : "Correct answer provided clearly.",
+  "timestamp" : "2025-09-09 14:10:35",
+  "metadata" : null
+}, {
+  "id" : "74a52012-8b72-4235-a863-1777dd8ac33a",
+  "runId" : "run-001",
+  "input" : "Explain quantum computing in simple terms.",
+  "response" : "Quantum computing is a type of computing that uses quantum bits instead of regular bits.",
+  "llmScore" : "Bad",
+  "llmReason" : "Response lacks detail and accuracy.",
+  "humanScore" : "Bad",
+  "humanReason" : "Too simplistic, missing key concepts.",
+  "timestamp" : "2025-09-09 14:10:35",
+  "metadata" : null
+}, {
+  "id" : "b11add2c-730d-4ab0-b3c7-ed008f75c40c",
+  "runId" : "run-002",
+  "input" : "How do you make chocolate chip cookies?",
+  "response" : "To make chocolate chip cookies, you need flour, butter, sugar, eggs, and chocolate chips. Mix ingredients, form dough, bake at 375°F for 10-12 minutes.",
+  "llmScore" : "Good",
+  "llmReason" : "Provides basic recipe with key steps.",
+  "humanScore" : "Unknown",
+  "humanReason" : "",
+  "timestamp" : "2025-09-09 14:10:35",
+  "metadata" : null
+} ]
