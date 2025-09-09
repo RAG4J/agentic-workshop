@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
 
 import java.util.List;
 import java.util.Optional;
@@ -197,8 +200,55 @@ public class RunController {
         }
     }
     
+    /**
+     * REST API endpoint for executing a run (returns JSON)
+     */
     @PostMapping("/{id}/execute")
-    public String executeRun(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> executeRunAPI(@PathVariable String id) {
+        try {
+            logger.info("Starting execution of evaluation run via API: {}", id);
+            
+            // Verify run exists
+            Optional<EvaluationRun> runOpt = dataService.getRunById(id);
+            if (runOpt.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of(
+                                "error", "Run not found",
+                                "message", "Evaluation run with ID " + id + " was not found"
+                        ));
+            }
+            
+            // Execute the run asynchronously
+            evaluationRunnerService.executeRunAsync(id);
+            
+            logger.info("Successfully started execution of evaluation run: {}", id);
+            
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Evaluation run execution started successfully",
+                    "runId", id,
+                    "status", "RUNNING"
+            ));
+            
+        } catch (Exception e) {
+            logger.error("Failed to execute evaluation run {}: {}", id, e.getMessage(), e);
+            
+            return ResponseEntity.internalServerError()
+                    .body(Map.of(
+                            "success", false,
+                            "error", "Execution failed",
+                            "message", "Failed to execute evaluation run: " + e.getMessage(),
+                            "runId", id
+                    ));
+        }
+    }
+    
+    /**
+     * HTML form endpoint for executing a run (returns redirect) - for traditional form submission
+     */
+    @PostMapping("/{id}/execute-form")
+    public String executeRunForm(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             // Execute the run asynchronously
             evaluationRunnerService.executeRunAsync(id);

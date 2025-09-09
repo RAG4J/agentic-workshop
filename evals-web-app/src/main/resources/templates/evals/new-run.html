@@ -272,6 +272,51 @@
                 // Update help text if desired
                 this.nextElementSibling.textContent = `${description} (${value})`;
             });
+            
+            // Handle form submission with progress tracking for immediate execution
+            const form = document.querySelector('form');
+            const executeImmediatelyCheckbox = document.getElementById('executeImmediately');
+            
+            form.addEventListener('submit', function(event) {
+                if (executeImmediatelyCheckbox.checked) {
+                    event.preventDefault();
+                    
+                    // Show loading state on submit button
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    EvalUtils.setButtonLoading(submitButton, true);
+                    
+                    // Submit form first
+                    const formData = new FormData(form);
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text(); // Get response as text to parse run ID
+                        }
+                        throw new Error('Failed to create run');
+                    })
+                    .then(responseText => {
+                        // Parse the response to extract run ID
+                        // This assumes the server returns the run ID or redirects to a page with the run ID
+                        const runIdMatch = responseText.match(/runs\/(\w+)/) || responseText.match(/"id":\s*"([^"]+)")/);
+                        if (runIdMatch) {
+                            const runId = runIdMatch[1];
+                            // Show progress tracking for the execution
+                            ProgressUI.showProgress(runId);
+                        } else {
+                            // Fallback: redirect to runs list
+                            window.location.href = '/runs';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error creating run:', error);
+                        EvalUtils.setButtonLoading(submitButton, false);
+                        alert('Failed to create run: ' + error.message);
+                    });
+                }
+            });
         });
     </script>
 </body>

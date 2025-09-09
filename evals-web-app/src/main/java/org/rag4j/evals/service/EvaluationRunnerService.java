@@ -1,5 +1,7 @@
 package org.rag4j.evals.service;
 
+import org.rag4j.evals.exception.GlobalExceptionHandler;
+import org.rag4j.evals.exception.TokenExpiredException;
 import org.rag4j.evals.model.EvaluationRecord;
 import org.rag4j.evals.model.EvaluationRun;
 import org.rag4j.evals.model.RunStatus;
@@ -27,14 +29,17 @@ public class EvaluationRunnerService {
     private final QuestionLoaderService questionLoaderService;
     private final AgentRunner agentRunner;
     private final EvaluationDataService evaluationDataService;
+    private final ProgressTrackingService progressTrackingService;
     
     @Autowired
     public EvaluationRunnerService(QuestionLoaderService questionLoaderService,
                                  AgentRunner agentRunner,
-                                 EvaluationDataService evaluationDataService) {
+                                 EvaluationDataService evaluationDataService,
+                                 ProgressTrackingService progressTrackingService) {
         this.questionLoaderService = questionLoaderService;
         this.agentRunner = agentRunner;
         this.evaluationDataService = evaluationDataService;
+        this.progressTrackingService = progressTrackingService;
     }
     
     /**
@@ -97,11 +102,17 @@ public class EvaluationRunnerService {
             List<EvaluationRecord> records = evaluationDataService.getRecordsByRunId(runId);
             logger.info("Found {} records to process for run {}", records.size(), runId);
             
+            // Initialize progress tracking
+            progressTrackingService.startProgress(runId, records.size());
+            
             int completed = 0;
             for (EvaluationRecord record : records) {
-                // Skip if already has a response
-                if (record.getResponse() == null || record.getResponse().isEmpty()) {
-                    try {
+                try {
+                    // Update progress with current question
+                    progressTrackingService.updateProgress(runId, completed + 1, record.getInput());
+                    
+                    // Skip if already has a response
+                    if (record.getResponse() == null || record.getResponse().isEmpty()) {
                         // Generate response using AgentRunner
                         long startTime = System.currentTimeMillis();
                         String response = agentRunner.generateResponse(record.getInput());
@@ -120,20 +131,54 @@ public class EvaluationRunnerService {
                         
                         // Save updated record
                         evaluationDataService.saveRecord(record);
+                        
+                        logger.debug("Successfully processed question {}/{} for run {}", completed + 1, records.size(), runId);
+                    } else {
+                        logger.debug("Skipping record {} - already has response", record.getId());
+                    }
+                    
+                    // Increment completed count after successful processing
+                    completed++;
+                    
+                } catch (RuntimeException e) {
+                    // Check if this is a token expiration error
+                    if (GlobalExceptionHandler.isTokenExpiredException(e)) {
+                        logger.error("Token expired while processing record {} in run {}", record.getId(), runId, e);
+                        
+                        // Handle token expiration specifically
+                        handleTokenExpirationInRun(runId, e);
+                        
+                        // Stop processing and mark run as failed
+                        run.setStatus(RunStatus.FAILED);
+                        throw new TokenExpiredException(
+                            "Authentication token expired during run execution",
+                            "Please refresh your token in the main Thymeleaf Agent application and try again",
+                            e);
+                    } else {
+                        // Handle other runtime errors
+                        logger.error("Runtime error processing record {} in run {}", record.getId(), runId, e);
+                        
+                        // Increment completed count for failed processing
                         completed++;
                         
-                        logger.debug("Processed question {}/{} for run {}", completed, records.size(), runId);
-                        
-                    } catch (Exception e) {
-                        logger.error("Failed to process record {} in run {}", record.getId(), runId, e);
-                        // Continue with other records
+                        // Update progress to reflect the failed question
+                        progressTrackingService.updateProgress(runId, completed, "Error: " + e.getMessage());
+                        progressTrackingService.updateMessage(runId, 
+                            "Error on question " + completed + " of " + records.size() + ": " + e.getMessage());
                     }
-                } else {
+                } catch (Exception e) {
+                    logger.error("Failed to process record {} in run {}", record.getId(), runId, e);
+                    
+                    // Increment completed count for failed processing
                     completed++;
-                    logger.debug("Skipping record {} - already has response", record.getId());
+                    
+                    // Update progress to reflect the failed question
+                    progressTrackingService.updateProgress(runId, completed, "Error: " + e.getMessage());
+                    progressTrackingService.updateMessage(runId, 
+                        "Error on question " + completed + " of " + records.size() + ": " + e.getMessage());
                 }
                 
-                // Update run progress
+                // Update run progress after each record (success or failure)
                 run.setCompletedRecords(completed);
                 evaluationDataService.saveRun(run);
             }
@@ -142,12 +187,31 @@ public class EvaluationRunnerService {
             run.setStatus(RunStatus.COMPLETED);
             run.setCompletedAt(LocalDateTime.now());
             
+            // Complete progress tracking
+            progressTrackingService.completeProgress(runId, 
+                String.format("Successfully processed %d of %d questions", completed, records.size()));
+            
             logger.info("Completed evaluation run {} with {}/{} records processed", 
                        runId, completed, records.size());
+            
+        } catch (TokenExpiredException e) {
+            logger.error("Token expired during run execution: {}", runId, e);
+            run.setStatus(RunStatus.FAILED);
+            
+            // Handle token expiration in progress tracking
+            handleTokenExpirationInRun(runId, e);
             
         } catch (Exception e) {
             logger.error("Failed to execute run {}", runId, e);
             run.setStatus(RunStatus.FAILED);
+            
+            // Check if this is a token error
+            if (GlobalExceptionHandler.isTokenExpiredException(e)) {
+                handleTokenExpirationInRun(runId, e);
+            } else {
+                // Mark progress as failed for other errors
+                progressTrackingService.failProgress(runId, "Run execution failed: " + e.getMessage());
+            }
         }
         
         return evaluationDataService.saveRun(run);
@@ -252,5 +316,28 @@ public class EvaluationRunnerService {
                            questionLoaderService.isQuestionsFileAvailable() ? "Ready" : "Not Ready",
                            agentRunner.isReady() ? "Ready" : "Not Ready",
                            getAvailableQuestionCount());
+    }
+    
+    /**
+     * Handles token expiration during run execution
+     * Updates progress tracking with token refresh instructions
+     * 
+     * @param runId The ID of the run that failed due to token expiration
+     * @param ex The exception that caused the token expiration
+     */
+    private void handleTokenExpirationInRun(String runId, Exception ex) {
+        String errorMessage = "\ud83d\udd10 Authentication token has expired";
+        String instructions = "To continue:\n" +
+                "1. Open the main Thymeleaf Agent application (http://localhost:8080)\n" +
+                "2. Navigate to the Token Management page\n" +
+                "3. Generate a new token or refresh your existing token\n" +
+                "4. The new token will be automatically shared with this evaluation app\n" +
+                "5. Start a new evaluation run to continue";
+        
+        // Update progress with detailed token refresh instructions
+        progressTrackingService.failProgress(runId, errorMessage);
+        progressTrackingService.updateMessage(runId, errorMessage + "\n\n" + instructions);
+        
+        logger.warn("Run {} failed due to token expiration. User needs to refresh token.", runId);
     }
 }

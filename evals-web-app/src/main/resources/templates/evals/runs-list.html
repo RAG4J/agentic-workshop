@@ -168,20 +168,18 @@
             bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
         }
         
-        // Handle execute run
+        // Handle execute run with progress tracking
         function executeRun() {
             if (currentRunId && confirm('Execute this run? This will start generating agent responses for all questions.')) {
-                // Create form for execute request
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/runs/${currentRunId}/execute`;
+                // Close modal first
+                bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
                 
-                document.body.appendChild(form);
-                form.submit();
+                // Use the global progress tracking function
+                executeRunWithProgress(currentRunId, `/runs/${currentRunId}/execute`);
+            } else {
+                // Close modal if user cancels
+                bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
             }
-            
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
         }
         
         // Handle duplicate run
