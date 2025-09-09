@@ -253,26 +253,40 @@ window.ProgressUI = {
                     this.estimatedTime.textContent = `Estimated time remaining: ${seconds}s`;
                 }
             } else if (progress.status === 'COMPLETED') {
-                this.estimatedTime.textContent = 'Execution completed!';
+                this.estimatedTime.textContent = 'Execution completed! Page will refresh shortly...';
             } else if (progress.status === 'FAILED') {
-                this.estimatedTime.textContent = 'Execution failed.';
+                if (this.isTokenError(progress)) {
+                    this.estimatedTime.textContent = 'Execution failed due to token expiration.';
+                } else {
+                    this.estimatedTime.textContent = 'Execution failed. Page will refresh shortly...';
+                }
             } else {
                 this.estimatedTime.textContent = 'Calculating time remaining...';
             }
         }
         
-        // Auto-hide modal when completed (after 3 seconds), but keep failed ones open longer for token errors
+        // Handle completion and failures
         if (progress.status === 'COMPLETED') {
+            // Update progress bar to show completion with success color
+            if (this.progressBar) {
+                this.progressBar.className = 'progress-bar bg-success';
+            }
+            
             setTimeout(() => {
                 this.hideProgress();
-            }, 3000);
+                // Reload the page to show updated run status
+                console.log('Run completed, reloading page to show updated status');
+                window.location.reload();
+            }, 2500); // 2.5 seconds to let user see completion message
         } else if (progress.status === 'FAILED' && !this.isTokenError(progress)) {
-            // Non-token errors auto-hide after 5 seconds
+            // Non-token errors auto-hide after 4 seconds and reload to show failed status
             setTimeout(() => {
                 this.hideProgress();
-            }, 5000);
+                console.log('Run failed, reloading page to show updated status');
+                window.location.reload();
+            }, 4000);
         }
-        // Token errors stay open until manually closed
+        // Token errors stay open until manually closed (no reload needed)
     },
     
     // Hide progress modal

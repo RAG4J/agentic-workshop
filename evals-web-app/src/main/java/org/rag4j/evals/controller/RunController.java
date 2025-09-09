@@ -57,7 +57,6 @@ public class RunController {
     public String createRun(
             @Validated @ModelAttribute("run") EvaluationRun run,
             @ModelAttribute("configuration") RunConfiguration configuration,
-            @RequestParam(value = "executeImmediately", defaultValue = "false") boolean executeImmediately,
             RedirectAttributes redirectAttributes) {
         
         try {
@@ -71,18 +70,13 @@ public class RunController {
             logger.info("Created new evaluation run: {} - {} with {} records", 
                        savedRun.getId(), savedRun.getName(), savedRun.getTotalRecords());
             
-            String successMessage = String.format("Evaluation run created successfully with %d questions", 
-                                                 savedRun.getTotalRecords());
-            
-            // Execute immediately if requested
-            if (executeImmediately) {
-                evaluationRunnerService.executeRunAsync(savedRun.getId());
-                successMessage += ". Execution started in background.";
-            }
+            String successMessage = String.format("Evaluation run '%s' created successfully with %d questions. You can now execute the run to generate responses.", 
+                                                 savedRun.getName(), savedRun.getTotalRecords());
             
             redirectAttributes.addFlashAttribute("success", successMessage);
             
-            return "redirect:/evaluations?runId=" + savedRun.getId();
+            // Redirect to run details page instead of evaluations
+            return "redirect:/runs/" + savedRun.getId();
             
         } catch (Exception e) {
             logger.error("Failed to create evaluation run: {}", e.getMessage(), e);
