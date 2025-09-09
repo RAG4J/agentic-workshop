@@ -16,6 +16,9 @@
                 <a href="#" th:href="@{/runs/new}" class="btn btn-success">
                     <i class="fas fa-plus me-1"></i>New Run
                 </a>
+                <a th:if="${selectedRun}" th:href="@{'/runs/' + ${selectedRun.id}}" class="btn btn-info">
+                    <i class="fas fa-eye me-1"></i>View Run
+                </a>
                 <a href="#" th:href="@{/runs}" class="btn btn-outline-primary">
                     <i class="fas fa-list me-1"></i>All Runs
                 </a>
