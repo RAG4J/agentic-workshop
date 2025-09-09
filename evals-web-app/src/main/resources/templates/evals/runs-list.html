@@ -110,9 +110,6 @@
                         <a href="#" id="editRunLink" class="list-group-item list-group-item-action">
                             <i class="fas fa-edit me-2 text-warning"></i>Edit Run
                         </a>
-                        <a href="#" id="duplicateRunLink" class="list-group-item list-group-item-action">
-                            <i class="fas fa-copy me-2 text-info"></i>Duplicate Run
-                        </a>
                         <a href="#" id="viewRecordsLink" class="list-group-item list-group-item-action">
                             <i class="fas fa-table me-2 text-primary"></i>View Records
                         </a>
@@ -182,19 +179,6 @@
             }
         }
         
-        // Handle duplicate run
-        document.getElementById('duplicateRunLink').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (currentRunId) {
-                // Create form for duplicate request
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/runs/${currentRunId}/duplicate`;
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-        });
     </script>
 </body>
 </html>

@@ -161,38 +161,6 @@ public class RunController {
         }
     }
     
-    @PostMapping("/{id}/duplicate")
-    public String duplicateRun(@PathVariable String id, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<EvaluationRun> runOpt = dataService.getRunById(id);
-            
-            if (runOpt.isPresent()) {
-                EvaluationRun originalRun = runOpt.get();
-                
-                // Create a copy
-                EvaluationRun duplicateRun = new EvaluationRun();
-                duplicateRun.setId(UUID.randomUUID().toString());
-                duplicateRun.setName(originalRun.getName() + " (Copy)");
-                duplicateRun.setDescription(originalRun.getDescription());
-                duplicateRun.setConfiguration(originalRun.getConfiguration());
-                
-                EvaluationRun savedRun = dataService.saveRun(duplicateRun);
-                
-                logger.info("Duplicated evaluation run {} to {}", id, savedRun.getId());
-                redirectAttributes.addFlashAttribute("success", "Evaluation run duplicated successfully");
-                
-                return "redirect:/runs/" + savedRun.getId();
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Run not found for duplication");
-                return "redirect:/runs";
-            }
-            
-        } catch (Exception e) {
-            logger.error("Failed to duplicate evaluation run {}: {}", id, e.getMessage());
-            redirectAttributes.addFlashAttribute("error", "Failed to duplicate evaluation run: " + e.getMessage());
-            return "redirect:/runs";
-        }
-    }
     
     /**
      * REST API endpoint for executing a run (returns JSON)

@@ -59,7 +59,7 @@ The application comes with sample evaluation data that includes:
 - **Filter by Run**: Use the dropdown to filter records by evaluation run
 - **Details Buttons**: Click "Details" buttons to view full field content in modals
 - **Human Scoring**: Click "Score" buttons to add or update human evaluation scores
-- **Run Actions**: Create, edit, duplicate, and delete evaluation runs
+- **Run Actions**: Create, edit, and delete evaluation runs
 
 ## Data Model
 
@@ -116,7 +116,6 @@ Key configuration in `application.yml`:
 - `DELETE /evaluations/{id}` - Delete evaluation record
 - `POST /runs/new` - Create new run
 - `DELETE /runs/{id}` - Delete run
-- `POST /runs/{id}/duplicate` - Duplicate run
 
 ### Health & Monitoring
 - `GET /actuator/health` - Application health status

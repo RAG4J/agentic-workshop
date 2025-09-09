@@ -148,11 +148,6 @@
                                 <a th:href="@{'/runs/' + ${run.id} + '/edit'}" class="btn btn-outline-secondary btn-sm">
                                     <i class="fas fa-edit me-1"></i>Edit Run Settings
                                 </a>
-                                <button class="btn btn-outline-warning btn-sm"
-                                        th:attr="data-run-id=${run.id}"
-                                        onclick="duplicateRun(this.dataset.runId)">
-                                    <i class="fas fa-copy me-1"></i>Duplicate Run
-                                </button>
                                 <button class="btn btn-outline-danger btn-sm"
                                         th:attr="data-run-id=${run.id}"
                                         onclick="confirmDeleteRun(this.dataset.runId)">
@@ -195,17 +190,6 @@
     <div th:replace="~{fragments/template :: scripts}"></div>
     
     <script>
-        // Duplicate run functionality
-        function duplicateRun(runId) {
-            if (confirm('Create a duplicate of this run?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/runs/${runId}/duplicate`;
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
         
         // Delete run functionality
         function confirmDeleteRun(runId) {
